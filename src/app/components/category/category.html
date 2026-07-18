@@ -1,0 +1,7 @@
+<section class="category">
+    <h2 class="category-title">{{ category.name }}</h2>
+    <div class="tile-grid">
+        <app-tile *ngFor="let tile of category.tiles" [tile]="tile">
+        </app-tile>
+    </div>
+</section>

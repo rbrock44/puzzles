@@ -1,59 +1,94 @@
 # Puzzles
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.7.
+> A tile-based collection of standalone puzzle <br/>
+> [Live - Puzzles](https://puzzles.ryan-brock.com/)
 
-## Development server
+---
 
-To start a local development server, run:
+## 📚 Table of Contents
 
-```bash
-ng serve
+- [What's My Purpose?](#-whats-my-purpose)
+- [How to Use](#-how-to-use)
+- [Adding a New Puzzle](#-adding-a-new-puzzle)
+- [Technologies](#-technologies)
+- [Getting Started (Local Setup)](#-getting-started-local-setup)
+  - [Run Locally](#run-locally)
+  - [Test](#test)
+  - [GitHub Hooks](#github-hooks)
+  - [Build](#build)
+  - [Deploy](#deploy)
+
+---
+
+## 🧠 What's My Purpose?
+
+To showcase and play the various puzzzles I've ran across in life and chosen to implement
+
+---
+
+## 🚦 How to Use
+
+- `Tile Grid` - The home page shows categories of puzzles, each containing one or more selectable tiles
+- `Tile` - Click a tile to open and play that puzzle
+- `Logo` - Click the `Puzzles` logo in the header to return to the tile grid
+
+---
+
+## 🧩 Adding a New Puzzle
+
+See [`.github/skills/add-puzzle/SKILL.md`](.github/skills/add-puzzle/SKILL.md) for the full step-by-step (component scaffold, registering it in `app.ts`/`app.html`, adding the tile to `constants/categories.ts`).
+
+---
+
+## 🛠 Technologies
+
+- Framework: `Angular 22`
+- Testing: `Vitest`
+- Deployment: `GitHub Pages`
+
+---
+
+## 🚀 Getting Started (Local Setup)
+
+* Install [node](https://nodejs.org/en)
+* Clone [repo](https://github.com/rbrock44/puzzles)
+
+---
+
+### Run Locally
+
+```
+npm install
+npm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+### Test
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Unit
+    - `ng test` || `npm run test`
+- Integration
+    - `ng e2e` || `npm run e2e`
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Github Hooks
 
-```bash
-ng generate --help
-```
+- Build
+    - Trigger: On Push to Main
+    - Action(s): Builds application then kicks off gh page action to deploy build output
 
-## Building
+---
 
-To build the project run:
+### Build
 
-```bash
-ng build
-```
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+### Deploy
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Run `npm run prod` to build and deploy the project. Make sure to be on `master` and that it is up to date before running the command. It's really meant to be a CI/CD action
 
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---

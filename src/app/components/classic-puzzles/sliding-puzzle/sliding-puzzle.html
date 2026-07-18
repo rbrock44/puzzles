@@ -1,0 +1,27 @@
+<section class="widget-container">
+  <h2>Sliding Puzzle</h2>
+  <p class="description">Slide tiles into the blank space to put them back in order, 1 through 15.</p>
+
+  <div class="meta-row">
+    <span class="moves">Moves: {{ moves() }}</span>
+    <button type="button" class="new-game-btn" (click)="newGame()">New Game</button>
+  </div>
+
+  @if (isSolved()) {
+    <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves! 🎉</p>
+  }
+
+  <div class="board">
+    @for (value of board(); track $index) {
+      <div
+        class="cell"
+        [class.blank]="value === 0"
+        (click)="handleTileClick($index)"
+      >
+        @if (value !== 0) {
+          {{ value }}
+        }
+      </div>
+    }
+  </div>
+</section>
