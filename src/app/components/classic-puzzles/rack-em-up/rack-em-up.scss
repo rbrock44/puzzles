@@ -16,6 +16,11 @@
   border: 1px solid var(--paper-line);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
+  transition: max-width 0.2s ease;
+}
+
+.widget-container.wide {
+  max-width: 840px;
 }
 
 .view-header {
@@ -78,6 +83,34 @@ h1 {
 .info-panel p {
   color: var(--ink-soft);
   font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.info-panel strong {
+  color: var(--ink);
+}
+
+.info-panel .trivia {
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
+.info-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 2.5rem;
+  margin-top: 0.5rem;
+}
+
+.info-col h2:first-child {
+  margin-top: 1rem;
+}
+
+@media (max-width: 680px) {
+  .info-columns {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }
 
 .info-panel .new-game-btn {
@@ -92,6 +125,33 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+}
+
+.meta-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.flip-btn {
+  background: var(--paper);
+  color: var(--ink-soft);
+  border: 1.5px solid var(--paper-line);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.flip-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber-deep);
+}
+
+.flip-btn:active {
+  transform: scale(0.97);
 }
 
 .moves {
@@ -151,8 +211,62 @@ h1 {
   }
 }
 
-.board-grid {
+.brand-cap {
   margin: 1.25rem auto 0;
+  padding: 0.55rem 1rem 0.7rem;
+  background: linear-gradient(180deg, var(--amber-tint), var(--paper));
+  border: 1px solid var(--paper-line);
+  overflow: hidden;
+}
+
+.brand-cap-top {
+  border-bottom: none;
+  border-radius: var(--radius-md) var(--radius-md) 4px 4px;
+}
+
+.brand-cap-bottom {
+  margin-top: 0;
+  border-top: none;
+  border-radius: 4px 4px var(--radius-md) var(--radius-md);
+}
+
+.brand-cap-header {
+  margin: 0 0 1.25rem;
+  border-radius: var(--radius-md);
+}
+
+.brand-cap-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.brand-cap-top .brand-cap-content {
+  transform: rotate(180deg);
+}
+
+.brand-cap-title {
+  font-family: 'Lobster', var(--font-display), cursive;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--amber-deep);
+  letter-spacing: 0;
+}
+
+.brand-cap-sub {
+  margin-top: 0.2rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.board-grid {
+  margin: 0 auto 0;
   width: 100%;
   display: grid;
   grid-template-columns: auto repeat(5, 1fr) auto;
@@ -161,7 +275,9 @@ h1 {
   padding: 0.65rem;
   background-color: var(--paper);
   border: 1px solid var(--paper-line);
-  border-radius: var(--radius-md);
+  border-top: none;
+  border-bottom: none;
+  border-radius: 0;
 }
 
 .cell-slot {

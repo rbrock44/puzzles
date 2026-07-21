@@ -118,6 +118,22 @@ export class RackEmUpComponent {
     this.moves.update(count => count + 1);
   }
 
+  flip(): void {
+    const cells = this.cells();
+    const next = [...cells];
+    for (let i = 0; i < cells.length / 2; i++) {
+      const j = next[i];
+      next[i] = next[cells.length - 1 - i];
+      next[cells.length - 1 - i] = j;
+    }
+    this.cells.set(next);
+
+    const plngl = this.plngl();
+    const plngr = this.plngr();
+    this.plngl.set(-plngr);
+    this.plngr.set(-plngl);
+  }
+
   newGame(): void {
     const state = this.generateScrambled();
     this.cells.set(state.cells);
