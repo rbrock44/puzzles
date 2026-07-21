@@ -1,0 +1,127 @@
+<section class="widget-container">
+  <div class="view-header">
+    <div>
+      <p class="eyebrow">Classic Puzzle</p>
+      <h1>Rack &#39;em Up</h1>
+    </div>
+    <button
+      type="button"
+      class="info-btn"
+      (click)="toggleView()"
+      [attr.aria-pressed]="view() === 'info'"
+    >
+      @if (view() === 'info') {
+        Back
+      } @else {
+        Info
+      }
+    </button>
+  </div>
+
+  @if (view() === 'info') {
+    <div class="info-panel">
+      <p class="description">
+        Arrange the balls so every row is a single colour, with the gap on the right.
+      </p>
+
+      <h2>Tilt</h2>
+      <p>
+        Tilt the whole board left or right. Every row slides its balls toward that side,
+        gathering any gaps on the opposite side.
+      </p>
+
+      <h2>Shift columns</h2>
+      <p>
+        The leftmost and rightmost columns can also shift up or down one row. Shifting
+        doesn't move any balls by itself &mdash; it reconnects that edge column to a
+        different row. The next tilt then carries a ball across into (or out of) the row
+        it's now aligned with. This is the only way to mix balls between rows.
+      </p>
+
+      <button type="button" class="new-game-btn" (click)="toggleView()">Back to game</button>
+    </div>
+  } @else {
+    <div class="meta-row">
+      <span class="moves">Moves <strong>{{ moves() }}</strong></span>
+      <button type="button" class="new-game-btn" (click)="newGame()">New game</button>
+    </div>
+
+    @if (isSolved()) {
+      <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
+    }
+
+    <div class="board-grid" [class.solved]="isSolved()">
+      <button
+        type="button"
+        class="tilt-btn tilt-left"
+        (click)="tilt('left')"
+        aria-label="Tilt board left"
+      >
+        &#11013;
+      </button>
+      <button
+        type="button"
+        class="tilt-btn tilt-right"
+        (click)="tilt('right')"
+        aria-label="Tilt board right"
+      >
+        &#10145;
+      </button>
+
+      <button
+        type="button"
+        class="shift-btn shift-left-up"
+        (click)="shiftColumn('left', 'up')"
+        [disabled]="!canShift('left', 'up')"
+        aria-label="Shift left column up"
+      >
+        &#9650;
+      </button>
+      <button
+        type="button"
+        class="shift-btn shift-right-up"
+        (click)="shiftColumn('right', 'up')"
+        [disabled]="!canShift('right', 'up')"
+        aria-label="Shift right column up"
+      >
+        &#9650;
+      </button>
+
+      @for (row of visualBoard(); track $index; let r = $index) {
+        @for (cell of row; track $index; let c = $index) {
+          @if (cell.kind !== 'cap') {
+            <div
+              class="cell-slot"
+              [class.wall]="cell.kind === 'wall'"
+              [style.grid-column]="c + 2"
+              [style.grid-row]="r + 2"
+            >
+              @if (cell.kind === 'ball' || cell.kind === 'blank') {
+                <div class="ball" [class.blank]="cell.kind === 'blank'" [ngClass]="cell.kind === 'ball' ? 'color-' + cell.color : ''"></div>
+              }
+            </div>
+          }
+        }
+      }
+
+      <button
+        type="button"
+        class="shift-btn shift-left-down"
+        (click)="shiftColumn('left', 'down')"
+        [disabled]="!canShift('left', 'down')"
+        aria-label="Shift left column down"
+      >
+        &#9660;
+      </button>
+      <button
+        type="button"
+        class="shift-btn shift-right-down"
+        (click)="shiftColumn('right', 'down')"
+        [disabled]="!canShift('right', 'down')"
+        aria-label="Shift right column down"
+      >
+        &#9660;
+      </button>
+    </div>
+  }
+</section>

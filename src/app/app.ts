@@ -5,6 +5,7 @@ import { TileGridComponent } from './components/tile-grid/tile-grid';
 import { HeaderComponent } from './components/header/header';
 import { SettingsService } from './services/settings';
 import { SlidingPuzzleComponent } from './components/classic-puzzles/sliding-puzzle/sliding-puzzle';
+import { RackEmUpComponent } from './components/classic-puzzles/rack-em-up/rack-em-up';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ import { SlidingPuzzleComponent } from './components/classic-puzzles/sliding-puz
   imports: [
     HeaderComponent,
     SlidingPuzzleComponent,
+    RackEmUpComponent,
     TileGridComponent,
     RouterOutlet,
     CommonModule,
