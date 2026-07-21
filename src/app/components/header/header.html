@@ -1,10 +1,42 @@
 <header class="header">
-      <div class="container">
-        <h1 class="logo" (click)="goHome()">Puzzles</h1>
-        <nav>
-          <a href="https://directory.ryan-brock.com" target="_blank" class="nav-link">
-            Directory
-          </a>
-        </nav>
-      </div>
-    </header>
+  <div class="container">
+    <button type="button" class="brand" (click)="goHome()">
+      <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+        <path
+          d="M24,16 L36,16 A14,14 0 0 0 64,16 L76,16 A8,8 0 0 1 84,24 L84,76 A8,8 0 0 1 76,84 L64,84 A14,14 0 0 1 36,84 L24,84 A8,8 0 0 1 16,76 L16,24 A8,8 0 0 1 24,16 Z"
+        />
+      </svg>
+      <span class="brand-name">Puzzles</span>
+    </button>
+    <nav class="nav">
+      <button
+        type="button"
+        class="theme-toggle"
+        (click)="themeService.toggle()"
+        [attr.aria-pressed]="themeService.theme() === 'dark'"
+        [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+      >
+        @if (themeService.theme() === 'dark') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <line x1="12" y1="2" x2="12" y2="4" />
+            <line x1="12" y1="20" x2="12" y2="22" />
+            <line x1="4" y1="12" x2="2" y2="12" />
+            <line x1="22" y1="12" x2="20" y2="12" />
+            <line x1="4.93" y1="4.93" x2="3.51" y2="3.51" />
+            <line x1="20.49" y1="20.49" x2="19.07" y2="19.07" />
+            <line x1="4.93" y1="19.07" x2="3.51" y2="20.49" />
+            <line x1="20.49" y1="3.51" x2="19.07" y2="4.93" />
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+          </svg>
+        }
+      </button>
+      <a href="https://directory.ryan-brock.com" target="_blank" rel="noopener" class="nav-link">
+        Directory
+      </a>
+    </nav>
+  </div>
+</header>
