@@ -1,15 +1,18 @@
 .category {
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
 }
 
 .category-title {
-    color: #333;
-    margin-bottom: 1rem;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.4rem;
     font-size: 1.5rem;
+    font-weight: 600;
+    border-bottom: 3px solid var(--amber);
 }
 
 .tile-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.75rem;
 }

@@ -1,30 +1,71 @@
 .tile {
-    background: white;
-    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+    width: 100%;
+    text-align: left;
+    background: var(--paper-raised);
+    border: 1px solid var(--paper-line);
+    border-radius: var(--radius-md);
     padding: 1.5rem;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font: inherit;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
-.tile:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.tile:hover,
+.tile:focus-visible {
+    transform: translateY(-4px) rotate(-0.6deg);
+    box-shadow: var(--shadow-md);
+    border-color: var(--amber);
 }
 
-.icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+.tile:active {
+    transform: translateY(-1px) rotate(0deg);
 }
 
-.title {
-    margin: 0 0 0.5rem 0;
-    color: #333;
-    font-size: 1.25rem;
+.tile-badge {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
-.description {
+.tile-badge-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: var(--amber-tint);
+    stroke: var(--amber-deep);
+    stroke-width: 2px;
+    transition: fill 0.22s ease;
+}
+
+.tile:hover .tile-badge-shape,
+.tile:focus-visible .tile-badge-shape {
+    fill: var(--amber);
+}
+
+.tile-icon {
+    position: relative;
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.tile-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.tile-description {
     margin: 0;
-    color: #666;
-    font-size: 0.9rem;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    line-height: 1.5;
 }

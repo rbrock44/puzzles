@@ -1,27 +1,30 @@
 <section class="widget-container">
-  <h2>Sliding Puzzle</h2>
+  <p class="eyebrow">Classic Puzzle</p>
+  <h1>Sliding Puzzle</h1>
   <p class="description">Slide tiles into the blank space to put them back in order, 1 through 15.</p>
 
   <div class="meta-row">
-    <span class="moves">Moves: {{ moves() }}</span>
-    <button type="button" class="new-game-btn" (click)="newGame()">New Game</button>
+    <span class="moves">Moves <strong>{{ moves() }}</strong></span>
+    <button type="button" class="new-game-btn" (click)="newGame()">New game</button>
   </div>
 
   @if (isSolved()) {
-    <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves! 🎉</p>
+    <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
   }
 
-  <div class="board">
+  <div class="board" [class.solved]="isSolved()">
     @for (value of board(); track $index) {
-      <div
+      <button
+        type="button"
         class="cell"
         [class.blank]="value === 0"
+        [disabled]="value === 0"
         (click)="handleTileClick($index)"
       >
         @if (value !== 0) {
           {{ value }}
         }
-      </div>
+      </button>
     }
   </div>
 </section>
