@@ -8,7 +8,13 @@ export const CATEGORIES: Category[] = [
                 title: 'Sliding Puzzle',
                 description: 'Slide numbered tiles into order, one move at a time',
                 icon: '🧩',
-                param: 'sp'
+                param: 'sliding-puzzle'
+            },
+            {
+                title: "Rack 'em Up",
+                description: 'Tilt and shift to sort the balls into solid-colour rows',
+                icon: '🎱',
+                param: 'rack-em-up'
             }
         ]
     }

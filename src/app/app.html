@@ -2,8 +2,11 @@
 <app-header></app-header>
 
 @if (this.settingsService.getSelectedTile() !== null) {
-  @if (this.settingsService.getSelectedTile() === "sp") {
+  @if (this.settingsService.getSelectedTile() === "sliding-puzzle" || this.settingsService.getSelectedTile() === "sp") {
     <app-sliding-puzzle></app-sliding-puzzle>
+  }
+  @if (this.settingsService.getSelectedTile() === "rack-em-up" || this.settingsService.getSelectedTile() === "reu") {
+     <app-rack-em-up></app-rack-em-up>
   }
 }
 
