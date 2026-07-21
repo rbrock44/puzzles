@@ -1,4 +1,4 @@
-<section class="widget-container">
+<section class="widget-container" [class.wide]="view() === 'info'">
   <div class="view-header">
     <div>
       <p class="eyebrow">Classic Puzzle</p>
@@ -20,35 +20,93 @@
 
   @if (view() === 'info') {
     <div class="info-panel">
+      <div class="brand-cap brand-cap-header" aria-hidden="true">
+        <div class="brand-cap-content">
+          <span class="brand-cap-title">Rack&#39;em up</span>
+          <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
+        </div>
+      </div>
+
       <p class="description">
-        Arrange the balls so every row is a single colour, with the gap on the right.
+        Rack &#39;em Up is a tray of 4 rows, each holding 4 balls and one gap. Thin walls
+        separate the rows, so nothing can move up or down &mdash; except through the two
+        end columns, which are the only way to mix balls between rows. The goal: get
+        every row down to a single colour, with the tray sitting centred (not shifted).
       </p>
 
-      <h2>Tilt</h2>
-      <p>
-        Tilt the whole board left or right. Every row slides its balls toward that side,
-        gathering any gaps on the opposite side.
-      </p>
+      <div class="info-columns">
+        <div class="info-col">
+          <h2>The moves</h2>
+          <p>
+            <strong>Tilt (L / R)</strong> &mdash; slides every row's balls toward that
+            side, gathering the gaps on the opposite side. This is the only move that
+            actually relocates a ball.
+          </p>
+          <p>
+            <strong>Shift (Ul / Ur / Dl / Dr)</strong> &mdash; the leftmost and
+            rightmost columns are taller than the rest and can slide up or down one row,
+            so each has three positions: up, centre, down. Shifting doesn't move any
+            balls by itself &mdash; it just reconnects that edge column to a different
+            row (you'll see a hatched wall appear where it's no longer lined up with a
+            row). The <em>next</em> tilt is what actually carries a ball across into
+            &mdash; or out of &mdash; the row it's now plugged into.
+          </p>
+          <p>
+            <strong>Flip</strong> &mdash; turns the whole tray upside down. It doesn't
+            rearrange anything relative to itself, just your view of it, so it's free
+            and doesn't count as a move. It's mainly useful for reusing the same
+            technique on rows you've already solved once you flip them to the bottom.
+          </p>
+        </div>
 
-      <h2>Shift columns</h2>
-      <p>
-        The leftmost and rightmost columns can also shift up or down one row. Shifting
-        doesn't move any balls by itself &mdash; it reconnects that edge column to a
-        different row. The next tilt then carries a ball across into (or out of) the row
-        it's now aligned with. This is the only way to mix balls between rows.
-      </p>
+        <div class="info-col">
+          <h2>Strategy</h2>
+          <p>
+            Save the two outer rows for last &mdash; they're the hardest because
+            there's no third edge column to help mix them. Start with the two middle
+            rows instead: shift a column so it lines up with the row you want, tilt to
+            pull one matching ball across, then shift back and tilt again to slot it
+            fully into place. Repeating this, one ball at a time, is usually enough to
+            finish both middle rows.
+          </p>
+          <p>
+            For the outer rows, a shift-tilt-shift sequence lets you swap a piece
+            sitting in an outer row's second slot with the corner piece next to it,
+            without disturbing anything else &mdash; repeat that swap until the row is
+            solid. Once the bottom two rows are done, use Flip to bring the last row
+            within reach and repeat the same trick.
+          </p>
+          <p class="trivia">
+            Ignoring shift position, there are 16!/4!<sup>4</sup> = 63,063,000 distinct
+            arrangements of the balls &mdash; every one of them reachable from solved,
+            and vice versa.
+          </p>
+        </div>
+      </div>
 
       <button type="button" class="new-game-btn" (click)="toggleView()">Back to game</button>
     </div>
   } @else {
     <div class="meta-row">
       <span class="moves">Moves <strong>{{ moves() }}</strong></span>
-      <button type="button" class="new-game-btn" (click)="newGame()">New game</button>
+      <div class="meta-actions">
+        <button type="button" class="flip-btn" (click)="flip()" aria-label="Turn the tray upside down">
+          &#8635; Flip
+        </button>
+        <button type="button" class="new-game-btn" (click)="newGame()">New game</button>
+      </div>
     </div>
 
     @if (isSolved()) {
       <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
     }
+
+    <div class="brand-cap brand-cap-top" aria-hidden="true">
+      <div class="brand-cap-content">
+        <span class="brand-cap-title">Rack&#39;em up</span>
+        <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
+      </div>
+    </div>
 
     <div class="board-grid" [class.solved]="isSolved()">
       <button
@@ -122,6 +180,13 @@
       >
         &#9660;
       </button>
+    </div>
+
+    <div class="brand-cap brand-cap-bottom" aria-hidden="true">
+      <div class="brand-cap-content">
+        <span class="brand-cap-title">Rack&#39;em up</span>
+        <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
+      </div>
     </div>
   }
 </section>
