@@ -1,4 +1,5 @@
-import { Cell, COLS, Direction, Side, applyTilt, canShiftState, isSolvedState } from './rack-em-up-logic';
+import { Direction, SIDE, Side, DIRECTION } from '../../../objects/game';
+import { Cell, COLS, applyTilt, canShiftState, isSolvedState } from './rack-em-up-logic';
 
 export type SolverMove =
   | { kind: 'tilt'; direction: Side }
@@ -48,7 +49,7 @@ function neighbors(state: BoardState): { move: SolverMove; state: BoardState }[]
   const results: { move: SolverMove; state: BoardState }[] = [];
   const currentKey = stateKey(state.cells, state.plngl, state.plngr);
 
-  for (const direction of ['left', 'right'] as const) {
+  for (const direction of [SIDE.LEFT, SIDE.RIGHT] as const) {
     const tilted = applyTilt(state.cells, state.plngl, state.plngr, direction);
     if (stateKey(tilted, state.plngl, state.plngr) !== currentKey) {
       results.push({
@@ -58,15 +59,15 @@ function neighbors(state: BoardState): { move: SolverMove; state: BoardState }[]
     }
   }
 
-  for (const side of ['left', 'right'] as const) {
-    for (const direction of ['up', 'down'] as const) {
-      const plng = side === 'left' ? state.plngl : state.plngr;
+  for (const side of [SIDE.LEFT, SIDE.RIGHT] as const) {
+    for (const direction of [DIRECTION.UP, DIRECTION.DOWN] as const) {
+      const plng = side === SIDE.LEFT ? state.plngl : state.plngr;
       if (!canShiftState(plng, direction)) {
         continue;
       }
-      const delta = direction === 'up' ? -1 : 1;
+      const delta = direction === DIRECTION.UP ? -1 : 1;
       const next: BoardState =
-        side === 'left'
+        side === SIDE.LEFT
           ? { cells: state.cells, plngl: state.plngl + delta, plngr: state.plngr }
           : { cells: state.cells, plngl: state.plngl, plngr: state.plngr + delta };
       results.push({ move: { kind: 'shift', side, direction }, state: next });

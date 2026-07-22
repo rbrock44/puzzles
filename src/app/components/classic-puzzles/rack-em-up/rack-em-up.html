@@ -4,244 +4,154 @@
       <p class="eyebrow">Classic Puzzle</p>
       <h1>Rack &#39;em Up</h1>
     </div>
-    <button
-      type="button"
-      class="info-btn"
-      (click)="toggleView()"
-      [attr.aria-pressed]="view() === 'info'"
-    >
+    <button type="button" class="info-btn" (click)="toggleView()" [attr.aria-pressed]="view() === GAME_VIEW.INFO">
       @if (view() === 'info') {
-        Back
+      Back
       } @else {
-        Info
+      Info
       }
     </button>
   </div>
 
-  @if (view() === 'info') {
-    <div class="info-panel">
-      <div class="brand-cap brand-cap-header" aria-hidden="true">
-        <div class="brand-cap-content">
-          <span class="brand-cap-title">Rack&#39;em up</span>
-          <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
-        </div>
-      </div>
-
-      <p class="description">
-        Rack &#39;em Up is a tray of 4 rows, each holding 4 balls and one gap. Thin walls
-        separate the rows, so nothing can move up or down &mdash; except through the two
-        end columns, which are the only way to mix balls between rows. The goal: get
-        every row down to a single colour, with the tray sitting centred (not shifted).
-      </p>
-
-      <div class="info-columns">
-        <div class="info-col">
-          <h2>The moves</h2>
-          <p>
-            <strong>Tilt (L / R)</strong> &mdash; slides every row's balls toward that
-            side, gathering the gaps on the opposite side. This is the only move that
-            actually relocates a ball.
-          </p>
-          <p>
-            <strong>Shift (Ul / Ur / Dl / Dr)</strong> &mdash; the leftmost and
-            rightmost columns are taller than the rest and can slide up or down one row,
-            so each has three positions: up, centre, down. Shifting doesn't move any
-            balls by itself &mdash; it just reconnects that edge column to a different
-            row (you'll see a hatched wall appear where it's no longer lined up with a
-            row). The <em>next</em> tilt is what actually carries a ball across into
-            &mdash; or out of &mdash; the row it's now plugged into.
-          </p>
-          <p>
-            <strong>Flip</strong> &mdash; turns the whole tray upside down. It doesn't
-            rearrange anything relative to itself, just your view of it, so it's free
-            and doesn't count as a move. It's mainly useful for reusing the same
-            technique on rows you've already solved once you flip them to the bottom.
-          </p>
-        </div>
-
-        <div class="info-col">
-          <h2>Strategy</h2>
-          <p>
-            Save the two outer rows for last &mdash; they're the hardest because
-            there's no third edge column to help mix them. Start with the two middle
-            rows instead: shift a column so it lines up with the row you want, tilt to
-            pull one matching ball across, then shift back and tilt again to slot it
-            fully into place. Repeating this, one ball at a time, is usually enough to
-            finish both middle rows.
-          </p>
-          <p>
-            For the outer rows, a shift-tilt-shift sequence lets you swap a piece
-            sitting in an outer row's second slot with the corner piece next to it,
-            without disturbing anything else &mdash; repeat that swap until the row is
-            solid. Once the bottom two rows are done, use Flip to bring the last row
-            within reach and repeat the same trick.
-          </p>
-          <p class="trivia">
-            Ignoring shift position, there are 16!/4!<sup>4</sup> = 63,063,000 distinct
-            arrangements of the balls &mdash; every one of them reachable from solved,
-            and vice versa.
-          </p>
-        </div>
-      </div>
-
-      <button type="button" class="new-game-btn" (click)="toggleView()">Back to game</button>
-    </div>
-  } @else {
-    <div class="meta-row">
-      <div class="meta-actions">
-        <button
-          type="button"
-          class="solve-btn"
-          (click)="autoSolve()"
-          [disabled]="isLocked() || isSolved()"
-          aria-label="Automatically solve the puzzle"
-        >
-          @if (solverState() === 'computing' || solverState() === 'solving') {
-            Solving&hellip;
-          } @else {
-            Auto-Solve
-          }
-        </button>
-        <button
-          type="button"
-          class="flip-btn"
-          (click)="flip()"
-          [disabled]="isLocked()"
-          aria-label="Turn the tray upside down"
-        >
-          &#8635; Flip
-        </button>
-        <button
-          type="button"
-          class="new-game-btn"
-          (click)="newGame()"
-          [disabled]="solverState() === 'computing' || solverState() === 'solving'"
-        >
-          New game
-        </button>
-      </div>
-      <span class="moves">Moves <strong>{{ moves() }}</strong></span>
-    </div>
-
-    @if (isSolved()) {
-      <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
-    }
-
-    @if (showSolveConfirm()) {
-      <div class="confirm-backdrop" (click)="cancelAutoSolve()">
-        <div
-          class="confirm-dialog"
-          role="alertdialog"
-          aria-modal="true"
-          aria-labelledby="confirm-solve-title"
-          aria-describedby="confirm-solve-desc"
-          (click)="$event.stopPropagation()"
-        >
-          <h2 id="confirm-solve-title">Auto-solve this puzzle?</h2>
-          <p id="confirm-solve-desc">
-            This can&#39;t be undone. Once it starts, you&#39;ll lose control of the board
-            until it finishes solving.
-          </p>
-          <div class="confirm-actions">
-            <button type="button" class="confirm-cancel-btn" (click)="cancelAutoSolve()">
-              Cancel
-            </button>
-            <button type="button" class="confirm-ok-btn" (click)="confirmAutoSolve()">
-              Auto-Solve
-            </button>
-          </div>
-        </div>
-      </div>
-    }
-
-    <div class="brand-cap brand-cap-top" aria-hidden="true">
+@if (view() === GAME_VIEW.INFO) {
+  <div class="info-panel">
+    <div class="brand-cap brand-cap-header" aria-hidden="true">
       <div class="brand-cap-content">
         <span class="brand-cap-title">Rack&#39;em up</span>
         <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
       </div>
     </div>
 
-    <div class="board-grid" [class.solved]="isSolved()">
-      <button
-        type="button"
-        class="tilt-btn tilt-left"
-        (click)="tilt('left')"
-        [disabled]="isLocked()"
-        aria-label="Tilt board left"
-      >
-        &#11013;
-      </button>
-      <button
-        type="button"
-        class="tilt-btn tilt-right"
-        (click)="tilt('right')"
-        [disabled]="isLocked()"
-        aria-label="Tilt board right"
-      >
-        &#10145;
-      </button>
+    <p class="description">
+      Rack &#39;em Up is a tray of 4 rows, each holding 4 balls and one gap. Thin walls
+      separate the rows, so nothing can move up or down, except through the two
+      end columns, which are the only way to mix balls between rows. The goal is to get
+      every row down to a single colour, with the tray sitting centred (not shifted).
+    </p>
 
-      <button
-        type="button"
-        class="shift-btn shift-left-up"
-        (click)="shiftColumn('left', 'up')"
-        [disabled]="isLocked() || !canShift('left', 'up')"
-        aria-label="Shift left column up"
-      >
-        &#9650;
-      </button>
-      <button
-        type="button"
-        class="shift-btn shift-right-up"
-        (click)="shiftColumn('right', 'up')"
-        [disabled]="isLocked() || !canShift('right', 'up')"
-        aria-label="Shift right column up"
-      >
-        &#9650;
-      </button>
-
-      @for (row of visualBoard(); track $index; let r = $index) {
-        @for (cell of row; track $index; let c = $index) {
-          @if (cell.kind !== 'cap') {
-            <div
-              class="cell-slot"
-              [class.wall]="cell.kind === 'wall'"
-              [style.grid-column]="c + 2"
-              [style.grid-row]="r + 2"
-            >
-              @if (cell.kind === 'ball' || cell.kind === 'blank') {
-                <div class="ball" [class.blank]="cell.kind === 'blank'" [ngClass]="cell.kind === 'ball' ? 'color-' + cell.color : ''"></div>
-              }
-            </div>
+    <div class="info-columns">
+      @for (column of this.INFO_COLUMNS; track $index) {
+      <div class="info-col">
+        <h2>{{column.h2}}</h2>
+        @for (item of column.p; track $index) {
+        <p>
+          @if (item?.strong) {
+          <strong>{{item.strong}}</strong> &mdash;
           }
+          <span [innerHTML]="item.text"></span>
+        </p>
+        }
+        @if (column?.trivia) {
+        <p class="trivia" [innerHTML]="column.trivia"></p>
+        }
+      </div>
+      }
+    </div>
+  </div>
+
+  <button type="button" class="new-game-btn" (click)="toggleView()">Back to game</button>
+  } @else {
+  <div class="meta-row">
+    <div class="meta-actions">
+      <button type="button" class="solve-btn" (click)="autoSolve()" [disabled]="isLocked() || isSolved()"
+        aria-label="Automatically solve the puzzle">
+        @if (solverState() === SOLVER_STATE.COMPUTING || solverState() === SOLVER_STATE.SOLVING) {
+        Solving&hellip;
+        } @else {
+        Auto-Solve
+        }
+      </button>
+      <button type="button" class="flip-btn" (click)="flip()" [disabled]="isLocked()"
+        aria-label="Turn the tray upside down">
+        &#8635; Flip
+      </button>
+      <button type="button" class="new-game-btn" (click)="newGame()"
+        [disabled]="solverState() === SOLVER_STATE.COMPUTING || solverState() === SOLVER_STATE.SOLVING">
+        New game
+      </button>
+    </div>
+    <span class="moves">Moves <strong>{{ moves() }}</strong></span>
+  </div>
+
+  @if (isSolved()) {
+  <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
+  }
+
+  @if (showSolveConfirm()) {
+  <div class="confirm-backdrop" (click)="cancelAutoSolve()">
+    <div class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirm-solve-title"
+      aria-describedby="confirm-solve-desc" (click)="$event.stopPropagation()">
+      <h2 id="confirm-solve-title">Auto-solve this puzzle?</h2>
+      <p id="confirm-solve-desc">
+        This can&#39;t be undone. Once it starts, you&#39;ll lose control of the board
+        until it finishes solving.
+      </p>
+      <div class="confirm-actions">
+        <button type="button" class="confirm-cancel-btn" (click)="cancelAutoSolve()">
+          Cancel
+        </button>
+        <button type="button" class="confirm-ok-btn" (click)="confirmAutoSolve()">
+          Auto-Solve
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+
+  <div class="brand-cap brand-cap-top" aria-hidden="true">
+    <div class="brand-cap-content">
+      <span class="brand-cap-title">Rack&#39;em up</span>
+      <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
+    </div>
+  </div>
+
+  <div class="board-grid" [class.solved]="isSolved()">
+    <button type="button" class="tilt-btn tilt-left" (click)="tilt('left')" [disabled]="isLocked()"
+      aria-label="Tilt board left">
+      &#11013;
+    </button>
+    <button type="button" class="tilt-btn tilt-right" (click)="tilt('right')" [disabled]="isLocked()"
+      aria-label="Tilt board right">
+      &#10145;
+    </button>
+
+    <button type="button" class="shift-btn shift-left-up" (click)="shiftColumn('left', 'up')"
+      [disabled]="isLocked() || !canShift('left', 'up')" aria-label="Shift left column up">
+      &#9650;
+    </button>
+    <button type="button" class="shift-btn shift-right-up" (click)="shiftColumn('right', 'up')"
+      [disabled]="isLocked() || !canShift('right', 'up')" aria-label="Shift right column up">
+      &#9650;
+    </button>
+
+    @for (row of visualBoard(); track $index; let r = $index) {
+      @for (cell of row; track $index; let c = $index) {
+        @if (cell.kind !== 'cap') {
+          <div class="cell-slot" [class.wall]="cell.kind === 'wall'" [style.grid-column]="c + 2" [style.grid-row]="r + 2">
+            @if (cell.kind === 'ball' || cell.kind === 'blank') {
+            <div class="ball" [class.blank]="cell.kind === 'blank'"
+              [ngClass]="cell.kind === 'ball' ? 'color-' + cell.color : ''"></div>
+            }
+          </div>
         }
       }
+    }
 
-      <button
-        type="button"
-        class="shift-btn shift-left-down"
-        (click)="shiftColumn('left', 'down')"
-        [disabled]="isLocked() || !canShift('left', 'down')"
-        aria-label="Shift left column down"
-      >
-        &#9660;
-      </button>
-      <button
-        type="button"
-        class="shift-btn shift-right-down"
-        (click)="shiftColumn('right', 'down')"
-        [disabled]="isLocked() || !canShift('right', 'down')"
-        aria-label="Shift right column down"
-      >
-        &#9660;
-      </button>
-    </div>
+    <button type="button" class="shift-btn shift-left-down" (click)="shiftColumn('left', 'down')"
+      [disabled]="isLocked() || !canShift('left', 'down')" aria-label="Shift left column down">
+      &#9660;
+    </button>
+    <button type="button" class="shift-btn shift-right-down" (click)="shiftColumn('right', 'down')"
+      [disabled]="isLocked() || !canShift('right', 'down')" aria-label="Shift right column down">
+      &#9660;
+    </button>
+  </div>
 
-    <div class="brand-cap brand-cap-bottom" aria-hidden="true">
-      <div class="brand-cap-content">
-        <span class="brand-cap-title">Rack&#39;em up</span>
-        <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
-      </div>
+  <div class="brand-cap brand-cap-bottom" aria-hidden="true">
+    <div class="brand-cap-content">
+      <span class="brand-cap-title">Rack&#39;em up</span>
+      <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
     </div>
+  </div>
   }
 </section>
