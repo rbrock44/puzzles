@@ -1,16 +1,26 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  Cell,
+  COLS,
+  Direction,
+  LEFT_COL,
+  ROWS,
+  RIGHT_COL,
+  Side,
+  applyTilt,
+  canShiftState,
+  idx,
+  isSolvedState,
+  solvedCells,
+} from './rack-em-up-logic';
+import { SolverMove, solveRackEmUp } from './rack-em-up-solver';
 
-const ROWS = 4;
-const COLS = 5;
 const VISUAL_ROWS = ROWS + 2;
-const LEFT_COL = 0;
-const RIGHT_COL = COLS - 1;
+const AUTO_SOLVE_MOVE_DELAY_MS = 450;
 
-type Cell = number | null;
-type Side = 'left' | 'right';
-type Direction = 'up' | 'down';
 type VisualKind = 'ball' | 'blank' | 'wall' | 'cap';
+type SolverState = 'idle' | 'computing' | 'solving' | 'done';
 
 interface VisualCell {
   kind: VisualKind;
@@ -25,14 +35,19 @@ interface VisualCell {
   styleUrl: './rack-em-up.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RackEmUpComponent {
+export class RackEmUpComponent implements OnDestroy {
   private initial = this.generateScrambled();
+  private autoSolveTimer: ReturnType<typeof setTimeout> | null = null;
 
   view = signal<'play' | 'info'>('play');
   cells = signal<Cell[]>(this.initial.cells);
   plngl = signal<number>(this.initial.plngl);
   plngr = signal<number>(this.initial.plngr);
   moves = signal<number>(0);
+  solverState = signal<SolverState>('idle');
+  showSolveConfirm = signal<boolean>(false);
+
+  isLocked = computed<boolean>(() => this.solverState() !== 'idle');
 
   visualBoard = computed<VisualCell[][]>(() => {
     const cells = this.cells();
@@ -47,14 +62,14 @@ export class RackEmUpComponent {
           const plng = col === LEFT_COL ? plngl : plngr;
           const dataRow = vr - plng - 1;
           if (dataRow >= 0 && dataRow < ROWS) {
-            const value = cells[this.idx(dataRow, col)];
+            const value = cells[idx(dataRow, col)];
             row.push({ kind: value === null ? 'blank' : 'ball', color: value });
           } else {
             row.push({ kind: 'wall', color: null });
           }
         } else if (vr >= 1 && vr <= ROWS) {
           const dataRow = vr - 1;
-          const value = cells[this.idx(dataRow, col)];
+          const value = cells[idx(dataRow, col)];
           row.push({ kind: value === null ? 'blank' : 'ball', color: value });
         } else {
           row.push({ kind: 'cap', color: null });
@@ -66,33 +81,11 @@ export class RackEmUpComponent {
     return rows;
   });
 
-  isSolved = computed<boolean>(() => {
-    if (this.plngl() !== 0 || this.plngr() !== 0) {
-      return false;
-    }
-
-    const cells = this.cells();
-    for (let row = 0; row < ROWS; row++) {
-      let rowColor: number | null = null;
-      for (let col = 0; col < COLS; col++) {
-        const value = cells[this.idx(row, col)];
-        if (value === null) {
-          continue;
-        }
-        if (rowColor === null) {
-          rowColor = value;
-        } else if (value !== rowColor) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  });
+  isSolved = computed<boolean>(() => isSolvedState(this.cells(), this.plngl(), this.plngr()));
 
   canShift(side: Side, direction: Direction): boolean {
     const plng = side === 'left' ? this.plngl() : this.plngr();
-    return direction === 'up' ? plng > -1 : plng < 1;
+    return canShiftState(plng, direction);
   }
 
   toggleView(): void {
@@ -100,7 +93,7 @@ export class RackEmUpComponent {
   }
 
   tilt(direction: Side): void {
-    this.cells.set(this.applyTilt(this.cells(), this.plngl(), this.plngr(), direction));
+    this.cells.set(applyTilt(this.cells(), this.plngl(), this.plngr(), direction));
     this.moves.update(count => count + 1);
   }
 
@@ -135,6 +128,9 @@ export class RackEmUpComponent {
   }
 
   newGame(): void {
+    this.clearAutoSolveTimer();
+    this.solverState.set('idle');
+
     const state = this.generateScrambled();
     this.cells.set(state.cells);
     this.plngl.set(state.plngl);
@@ -142,69 +138,78 @@ export class RackEmUpComponent {
     this.moves.set(0);
   }
 
-  private idx(row: number, col: number): number {
-    return row * COLS + col;
-  }
-
-  private solvedCells(): Cell[] {
-    const cells: Cell[] = [];
-    for (let row = 0; row < ROWS; row++) {
-      for (let col = 0; col < COLS; col++) {
-        cells.push(col === RIGHT_COL ? null : row);
-      }
-    }
-    return cells;
-  }
-
-  private applyTilt(cells: Cell[], plngl: number, plngr: number, direction: Side): Cell[] {
-    const next = [...cells];
-    const inBounds = (row: number) => row >= 0 && row < ROWS;
-
-    let moved = true;
-    while (moved) {
-      moved = false;
-      for (let row = 0; row < ROWS; row++) {
-        const checkpoints: [number, number, number, number][] =
-          direction === 'left'
-            ? [
-                [row - plngl, LEFT_COL, row, 1],
-                [row, 1, row, 2],
-                [row, 2, row, 3],
-                [row, 3, row - plngr, RIGHT_COL],
-              ]
-            : [
-                [row - plngr, RIGHT_COL, row, 3],
-                [row, 3, row, 2],
-                [row, 2, row, 1],
-                [row, 1, row - plngl, LEFT_COL],
-              ];
-
-        for (const [tRow, tCol, nRow, nCol] of checkpoints) {
-          if (!inBounds(tRow) || !inBounds(nRow)) {
-            continue;
-          }
-          const tIdx = this.idx(tRow, tCol);
-          const nIdx = this.idx(nRow, nCol);
-          if (next[tIdx] === null && next[nIdx] !== null) {
-            next[tIdx] = next[nIdx];
-            next[nIdx] = null;
-            moved = true;
-          }
-        }
-      }
+  autoSolve(): void {
+    if (this.solverState() !== 'idle' || this.isSolved()) {
+      return;
     }
 
-    return next;
+    this.showSolveConfirm.set(true);
+  }
+
+  confirmAutoSolve(): void {
+    this.showSolveConfirm.set(false);
+    this.solverState.set('computing');
+
+    // Defer so the "computing" state can render before the (possibly
+    // heavy, synchronous) search runs.
+    this.autoSolveTimer = setTimeout(() => {
+      const moves = solveRackEmUp(this.cells(), this.plngl(), this.plngr());
+      if (!moves || moves.length === 0) {
+        this.solverState.set('done');
+        return;
+      }
+
+      this.solverState.set('solving');
+      this.playSolution(moves, 0);
+    }, 0);
+  }
+
+  cancelAutoSolve(): void {
+    this.showSolveConfirm.set(false);
+  }
+
+  ngOnDestroy(): void {
+    this.clearAutoSolveTimer();
+  }
+
+  private playSolution(moves: SolverMove[], index: number): void {
+    if (index >= moves.length) {
+      this.solverState.set('done');
+      return;
+    }
+
+    const move = moves[index];
+    if (move.kind === 'tilt') {
+      this.tilt(move.direction);
+    } else {
+      this.shiftColumn(move.side, move.direction);
+    }
+
+    if (this.isSolved()) {
+      this.solverState.set('done');
+      return;
+    }
+
+    this.autoSolveTimer = setTimeout(() => {
+      this.playSolution(moves, index + 1);
+    }, AUTO_SOLVE_MOVE_DELAY_MS);
+  }
+
+  private clearAutoSolveTimer(): void {
+    if (this.autoSolveTimer !== null) {
+      clearTimeout(this.autoSolveTimer);
+      this.autoSolveTimer = null;
+    }
   }
 
   private generateScrambled(): { cells: Cell[]; plngl: number; plngr: number } {
-    let cells = this.solvedCells();
+    let cells = solvedCells();
     let plngl = 0;
     let plngr = 0;
 
     for (let i = 0; i < 300; i++) {
       if (Math.random() < 0.4) {
-        cells = this.applyTilt(cells, plngl, plngr, Math.random() < 0.5 ? 'left' : 'right');
+        cells = applyTilt(cells, plngl, plngr, Math.random() < 0.5 ? 'left' : 'right');
       } else {
         const side: Side = Math.random() < 0.5 ? 'left' : 'right';
         const direction: Direction = Math.random() < 0.5 ? 'up' : 'down';

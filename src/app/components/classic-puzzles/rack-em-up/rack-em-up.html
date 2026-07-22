@@ -90,15 +90,68 @@
     <div class="meta-row">
       <span class="moves">Moves <strong>{{ moves() }}</strong></span>
       <div class="meta-actions">
-        <button type="button" class="flip-btn" (click)="flip()" aria-label="Turn the tray upside down">
+        <button
+          type="button"
+          class="solve-btn"
+          (click)="autoSolve()"
+          [disabled]="isLocked() || isSolved()"
+          aria-label="Automatically solve the puzzle"
+        >
+          @if (solverState() === 'computing' || solverState() === 'solving') {
+            Solving&hellip;
+          } @else {
+            Auto-Solve
+          }
+        </button>
+        <button
+          type="button"
+          class="flip-btn"
+          (click)="flip()"
+          [disabled]="isLocked()"
+          aria-label="Turn the tray upside down"
+        >
           &#8635; Flip
         </button>
-        <button type="button" class="new-game-btn" (click)="newGame()">New game</button>
+        <button
+          type="button"
+          class="new-game-btn"
+          (click)="newGame()"
+          [disabled]="solverState() === 'computing' || solverState() === 'solving'"
+        >
+          New game
+        </button>
       </div>
     </div>
 
     @if (isSolved()) {
       <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
+    }
+
+    @if (showSolveConfirm()) {
+      <div class="confirm-backdrop" (click)="cancelAutoSolve()">
+        <div
+          class="confirm-dialog"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="confirm-solve-title"
+          aria-describedby="confirm-solve-desc"
+          (click)="$event.stopPropagation()"
+        >
+          <h2 id="confirm-solve-title">Auto-solve this puzzle?</h2>
+          <p id="confirm-solve-desc">
+            This can&#39;t be undone. Once it starts, you&#39;ll lose control of the board
+            until it finishes solving.
+          </p>
+          <div class="confirm-actions">
+            <button type="button" class="confirm-cancel-btn" (click)="cancelAutoSolve()">
+              Cancel
+            </button>
+            <button type="button" class="confirm-ok-btn" (click)="confirmAutoSolve()">
+              Auto-Solve
+            </button>
+          </div>
+        </div>
+      </div>
     }
 
     <div class="brand-cap brand-cap-top" aria-hidden="true">
@@ -113,6 +166,7 @@
         type="button"
         class="tilt-btn tilt-left"
         (click)="tilt('left')"
+        [disabled]="isLocked()"
         aria-label="Tilt board left"
       >
         &#11013;
@@ -121,6 +175,7 @@
         type="button"
         class="tilt-btn tilt-right"
         (click)="tilt('right')"
+        [disabled]="isLocked()"
         aria-label="Tilt board right"
       >
         &#10145;
@@ -130,7 +185,7 @@
         type="button"
         class="shift-btn shift-left-up"
         (click)="shiftColumn('left', 'up')"
-        [disabled]="!canShift('left', 'up')"
+        [disabled]="isLocked() || !canShift('left', 'up')"
         aria-label="Shift left column up"
       >
         &#9650;
@@ -139,7 +194,7 @@
         type="button"
         class="shift-btn shift-right-up"
         (click)="shiftColumn('right', 'up')"
-        [disabled]="!canShift('right', 'up')"
+        [disabled]="isLocked() || !canShift('right', 'up')"
         aria-label="Shift right column up"
       >
         &#9650;
@@ -166,7 +221,7 @@
         type="button"
         class="shift-btn shift-left-down"
         (click)="shiftColumn('left', 'down')"
-        [disabled]="!canShift('left', 'down')"
+        [disabled]="isLocked() || !canShift('left', 'down')"
         aria-label="Shift left column down"
       >
         &#9660;
@@ -175,7 +230,7 @@
         type="button"
         class="shift-btn shift-right-down"
         (click)="shiftColumn('right', 'down')"
-        [disabled]="!canShift('right', 'down')"
+        [disabled]="isLocked() || !canShift('right', 'down')"
         aria-label="Shift right column down"
       >
         &#9660;

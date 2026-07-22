@@ -123,14 +123,23 @@ h1 {
   border-top: 1px dashed var(--paper-line);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 0.75rem;
+  row-gap: 0.6rem;
+  column-gap: 0.75rem;
 }
 
 .meta-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.5rem;
+}
+
+.moves {
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .flip-btn {
@@ -152,6 +161,147 @@ h1 {
 
 .flip-btn:active {
   transform: scale(0.97);
+}
+
+.flip-btn:disabled,
+.new-game-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+.flip-btn:disabled:hover {
+  border-color: var(--paper-line);
+  color: var(--ink-soft);
+}
+
+.new-game-btn:disabled:hover {
+  background: var(--amber);
+  color: var(--amber-ink);
+}
+
+.solve-btn {
+  background: var(--paper);
+  color: var(--amber-deep);
+  border: 1.5px solid var(--amber);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.solve-btn:hover {
+  background: var(--amber-tint);
+  border-color: var(--amber-deep);
+}
+
+.solve-btn:active {
+  transform: scale(0.97);
+}
+
+.solve-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+  background: var(--paper);
+  border-color: var(--paper-line);
+  color: var(--ink-soft);
+}
+
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(20, 22, 30, 0.55);
+  animation: fade-in 0.15s ease;
+}
+
+.confirm-dialog {
+  width: 100%;
+  max-width: 360px;
+  padding: 1.5rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  animation: pop-in 0.18s ease;
+}
+
+.confirm-dialog h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.confirm-dialog p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.confirm-cancel-btn {
+  background: var(--paper);
+  color: var(--ink-soft);
+  border: 1.5px solid var(--paper-line);
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.confirm-cancel-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber-deep);
+}
+
+.confirm-cancel-btn:active {
+  transform: scale(0.97);
+}
+
+.confirm-ok-btn {
+  background: var(--amber);
+  color: var(--amber-ink);
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.confirm-ok-btn:hover {
+  background: var(--amber-deep);
+  color: #fff;
+}
+
+.confirm-ok-btn:active {
+  transform: scale(0.97);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .moves {
@@ -404,6 +554,16 @@ h1 {
 
 .tilt-btn:active {
   transform: scale(0.92);
+}
+
+.tilt-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.tilt-btn:disabled:hover {
+  border-color: var(--paper-line);
+  color: var(--ink);
 }
 
 .tilt-left {
