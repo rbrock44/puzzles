@@ -88,7 +88,6 @@
     </div>
   } @else {
     <div class="meta-row">
-      <span class="moves">Moves <strong>{{ moves() }}</strong></span>
       <div class="meta-actions">
         <button
           type="button"
@@ -121,6 +120,7 @@
           New game
         </button>
       </div>
+      <span class="moves">Moves <strong>{{ moves() }}</strong></span>
     </div>
 
     @if (isSolved()) {
