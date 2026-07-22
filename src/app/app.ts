@@ -6,6 +6,7 @@ import { HeaderComponent } from './components/header/header';
 import { SettingsService } from './services/settings';
 import { SlidingPuzzleComponent } from './components/classic-puzzles/sliding-puzzle/sliding-puzzle';
 import { RackEmUpComponent } from './components/classic-puzzles/rack-em-up/rack-em-up';
+import { TopSpinComponent } from './components/classic-puzzles/top-spin/top-spin';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { RackEmUpComponent } from './components/classic-puzzles/rack-em-up/rack-
     HeaderComponent,
     SlidingPuzzleComponent,
     RackEmUpComponent,
+    TopSpinComponent,
     TileGridComponent,
     RouterOutlet,
     CommonModule,

@@ -32,6 +32,15 @@
   --amber-ink: #3a2405;
   --coral: #e4593f;
 
+  // Top Spin's accents are drawn from the real toy (grey housing, yellow
+  // pieces, purple turntable) and stay constant across themes like amber above.
+  --spin-purple: #9385c2;
+  --spin-purple-deep: #6b5a9c;
+  --spin-yellow: #f6c94a;
+  --spin-yellow-deep: #c68f0a;
+  --spin-frame: #cdc7ba;
+  --spin-frame-deep: #a9a294;
+
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace;

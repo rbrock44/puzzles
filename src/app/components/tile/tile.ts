@@ -1,15 +1,17 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SettingsService } from '../../services/settings';
+import { Component, Input } from '@angular/core';
 import { Tile } from '../../objects/tile';
+import { SettingsService } from '../../services/settings';
 import { RackEmUpLogoComponent } from '../classic-puzzles/rack-em-up/rack-em-up-logo/rack-em-up-logo';
+import { TopSpinLogoComponent } from '../classic-puzzles/top-spin/top-spin-logo/top-spin-logo';
 
 @Component({
   selector: 'app-tile',
   standalone: true,
   imports: [
-    CommonModule, 
-    RackEmUpLogoComponent
+    CommonModule,
+    RackEmUpLogoComponent,
+    TopSpinLogoComponent
   ],
   templateUrl: './tile.html',
   styleUrl: './tile.scss',

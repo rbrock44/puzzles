@@ -1,6 +1,8 @@
-<button type="button" class="tile" [class.tile-centered]="tile.param === 'rack-em-up'" (click)="handleClick()">
+<button type="button" class="tile" [class.tile-centered]="tile.param === 'rack-em-up' || tile.param === 'top-spin'" (click)="handleClick()">
     @if (tile.param === 'rack-em-up') {
         <app-rack-em-up-logo class="tile-logo" [compact]="true"></app-rack-em-up-logo>
+    } @else if (tile.param === 'top-spin') {
+        <app-top-spin-logo class="tile-logo" [compact]="true"></app-top-spin-logo>
     } @else {
         <span class="tile-badge">
             <svg class="tile-badge-shape" viewBox="0 0 100 100" aria-hidden="true">

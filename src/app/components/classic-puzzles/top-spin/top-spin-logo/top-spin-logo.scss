@@ -1,0 +1,39 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-title {
+  font-family: 'Bungee', var(--font-display), cursive;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  color: var(--spin-purple-deep);
+  letter-spacing: 0.02em;
+  background: linear-gradient(120deg, var(--spin-purple-deep) 35%, var(--spin-yellow-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-sub {
+  margin-top: 0.2rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+:host(.compact) .logo-title {
+  font-size: 1.05rem;
+}
+
+:host(.compact) .logo-sub {
+  margin-top: 0.1rem;
+  font-size: 0.45rem;
+  letter-spacing: 0.16em;
+}

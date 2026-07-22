@@ -1,0 +1,420 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 4.5rem);
+  min-height: calc(100dvh - 4.5rem);
+  padding: 1rem;
+}
+
+.widget-container {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 1.5rem 1.75rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition: max-width 0.2s ease;
+}
+
+.widget-container.wide {
+  max-width: 840px;
+}
+
+.view-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--spin-purple-deep);
+}
+
+h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.description {
+  margin-top: 0.4rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.info-btn {
+  flex-shrink: 0;
+  background: var(--paper);
+  color: var(--ink-soft);
+  border: 1.5px solid var(--paper-line);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.info-btn:hover {
+  border-color: var(--spin-purple);
+  color: var(--spin-purple-deep);
+}
+
+.info-panel {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--paper-line);
+}
+
+.info-panel h2 {
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.info-panel p {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.info-panel strong {
+  color: var(--ink);
+}
+
+.info-panel .trivia {
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
+.info-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 2.5rem;
+  margin-top: 0.5rem;
+}
+
+.info-col h2:first-child {
+  margin-top: 1rem;
+}
+
+@media (max-width: 680px) {
+  .info-columns {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+.info-panel .new-game-btn {
+  margin-top: 1.25rem;
+}
+
+.meta-row {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--paper-line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.meta-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.moves {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.moves strong {
+  margin-left: 0.4rem;
+  color: var(--ink);
+  font-size: 1.1rem;
+}
+
+.rotate-btn,
+.spin-btn {
+  background: var(--paper);
+  color: var(--ink-soft);
+  border: 1.5px solid var(--paper-line);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.rotate-btn:hover {
+  border-color: var(--spin-purple);
+  color: var(--spin-purple-deep);
+}
+
+.spin-btn {
+  color: var(--spin-purple-deep);
+  border-color: var(--spin-purple);
+}
+
+.spin-btn:hover {
+  background: color-mix(in srgb, var(--spin-purple) 14%, var(--paper));
+  border-color: var(--spin-purple-deep);
+}
+
+.rotate-btn:active,
+.spin-btn:active,
+.new-game-btn:active {
+  transform: scale(0.97);
+}
+
+.rotate-btn:disabled,
+.spin-btn:disabled,
+.new-game-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.new-game-btn {
+  background: var(--spin-purple);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.new-game-btn:hover {
+  background: var(--spin-purple-deep);
+}
+
+.solved-banner {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  background: color-mix(in srgb, var(--spin-yellow) 25%, var(--paper));
+  border: 1px solid var(--spin-yellow-deep);
+  border-radius: var(--radius-sm);
+  color: var(--spin-purple-deep);
+  font-weight: 700;
+  text-align: center;
+  animation: pop-in 0.3s ease;
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Board geometry mirrors the constants in top-spin-logic.ts (STRAIGHT_LENGTH
+// = 240, CAP_RADIUS = 42): a stadium/racetrack outline with the two straights
+// held well apart by generous rounded ends (8 pieces per straight, 2 per end
+// cap), matching the real toy's oval rather than a flattened line. Colours
+// are fixed regardless of site theme, like a physical object on the page.
+.board-wrap {
+  position: relative;
+  width: 380px;
+  height: 230px;
+  margin: 1.5rem auto 0.5rem;
+}
+
+.board-track {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  height: 130px;
+  background: var(--spin-frame);
+  border: 2px solid var(--spin-frame-deep);
+  border-radius: 65px;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.board-track::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  background: color-mix(in srgb, var(--spin-frame-deep) 45%, var(--spin-frame));
+  border-radius: 50px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.board-ring {
+  position: absolute;
+  inset: 0;
+}
+
+.turntable {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  // Kept in step with the .token transition below and the component's
+  // SPIN_ANIM_MS, so the disc and the 4 pieces inside it turn together.
+  transition: transform 0.4s ease;
+  cursor: pointer;
+}
+
+.turntable.disabled {
+  cursor: not-allowed;
+}
+
+.turntable-grip {
+  position: relative;
+  height: 50%;
+  background: var(--spin-purple);
+  border-bottom: 1px solid var(--spin-purple-deep);
+  overflow: hidden;
+}
+
+// A smaller circle, concentric with the disc, holding the stripe pattern.
+// Positioned so its centre sits exactly on the turntable's centre (the
+// grip/face divider); the grip's overflow:hidden then shows only its top
+// arc, so the padding follows the disc's curve instead of a straight inset.
+.turntable-grip::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: calc(100% - 10px);
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--spin-purple-deep) 0,
+    var(--spin-purple-deep) 2px,
+    var(--spin-purple) 2px,
+    var(--spin-purple) 6px
+  );
+}
+
+// Solid strip masking the bottom of the stripe circle, so the lines stop
+// short of the darker turntable-track band instead of running into it.
+// turntable-track reaches 16px into the grip, so this has to clear that
+// or it just gets hidden underneath the track with no visible effect.
+.turntable-grip::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 20px;
+  background: var(--spin-purple);
+}
+
+.turntable-face {
+  height: 50%;
+  background: var(--spin-purple);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 15%;
+}
+
+.turntable-dot {
+  width: 20%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: var(--spin-purple-deep);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+// The band where the pieces actually pass through the disc, picked out in a
+// darker purple than the grip/face either side of it so it reads as a track
+// slot rather than just more of the disc's surface.
+.turntable-track {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 32px;
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--spin-purple-deep) 45%, var(--spin-purple));
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.token {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #fde385 0%, #f6c94a 55%, #d9a316 100%);
+  border: 1.5px solid var(--spin-yellow-deep);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 4px rgba(0, 0, 0, 0.15),
+    0 2px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s ease;
+}
+
+.token-value {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.72rem;
+  color: #3a2a05;
+  // Counter-rotates in lockstep with the token's own flip (see top-spin.ts)
+  // so the number stays upright and readable while the piece spins with the
+  // turntable, rather than snapping straight afterwards.
+  transition: transform 0.4s ease;
+}
+
+.token.in-turntable {
+  border-color: var(--spin-purple-deep);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 4px rgba(0, 0, 0, 0.15),
+    0 0 0 2px color-mix(in srgb, var(--spin-purple) 55%, transparent);
+}
+
+.board-ring.solved .token {
+  border-color: var(--spin-purple-deep);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 4px rgba(0, 0, 0, 0.15),
+    0 0 0 2px var(--spin-yellow-deep);
+}
+
+@media (max-width: 480px) {
+  .widget-container {
+    padding: 1.25rem;
+  }
+
+  .board-wrap {
+    transform: scale(0.85);
+  }
+}
