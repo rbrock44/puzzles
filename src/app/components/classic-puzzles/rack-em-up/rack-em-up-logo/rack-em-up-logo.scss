@@ -1,0 +1,35 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-title {
+  font-family: 'Lobster', var(--font-display), cursive;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--amber-deep);
+  letter-spacing: 0;
+}
+
+.logo-sub {
+  margin-top: 0.2rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+:host(.compact) .logo-title {
+  font-size: 1.1rem;
+}
+
+:host(.compact) .logo-sub {
+  margin-top: 0.1rem;
+  font-size: 0.45rem;
+  letter-spacing: 0.16em;
+}

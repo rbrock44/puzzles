@@ -17,6 +17,7 @@ import {
 } from './rack-em-up-logic';
 import { SolverMove, solveRackEmUp } from './rack-em-up-solver';
 import { DIRECTION, Direction, GAME_VIEW, GameView, Side, SIDE, SOLVER_STATE, SolverState } from '../../../objects/game';
+import { RackEmUpLogoComponent } from './rack-em-up-logo/rack-em-up-logo';
 
 type VisualKind = 'ball' | 'blank' | 'wall' | 'cap';
 
@@ -44,7 +45,7 @@ const INFO_COLUMNS: InfoColumn[] = [
 @Component({
   selector: 'app-rack-em-up',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RackEmUpLogoComponent],
   templateUrl: './rack-em-up.html',
   styleUrl: './rack-em-up.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

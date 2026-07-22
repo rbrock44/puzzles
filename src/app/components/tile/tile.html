@@ -1,12 +1,16 @@
-<button type="button" class="tile" (click)="handleClick()">
-    <span class="tile-badge">
-        <svg class="tile-badge-shape" viewBox="0 0 100 100" aria-hidden="true">
-            <path
-                d="M24,16 L36,16 A14,14 0 0 0 64,16 L76,16 A8,8 0 0 1 84,24 L84,76 A8,8 0 0 1 76,84 L64,84 A14,14 0 0 1 36,84 L24,84 A8,8 0 0 1 16,76 L16,24 A8,8 0 0 1 24,16 Z"
-            />
-        </svg>
-        <span class="tile-icon" aria-hidden="true">{{ tile.icon }}</span>
-    </span>
-    <h3 class="tile-title">{{ tile.title }}</h3>
+<button type="button" class="tile" [class.tile-centered]="tile.param === 'rack-em-up'" (click)="handleClick()">
+    @if (tile.param === 'rack-em-up') {
+        <app-rack-em-up-logo class="tile-logo" [compact]="true"></app-rack-em-up-logo>
+    } @else {
+        <span class="tile-badge">
+            <svg class="tile-badge-shape" viewBox="0 0 100 100" aria-hidden="true">
+                <path
+                    d="M24,16 L36,16 A14,14 0 0 0 64,16 L76,16 A8,8 0 0 1 84,24 L84,76 A8,8 0 0 1 76,84 L64,84 A14,14 0 0 1 36,84 L24,84 A8,8 0 0 1 16,76 L16,24 A8,8 0 0 1 24,16 Z"
+                />
+            </svg>
+            <span class="tile-icon" aria-hidden="true">{{ tile.icon }}</span>
+        </span>
+        <h3 class="tile-title">{{ tile.title }}</h3>
+    }
     <p class="tile-description">{{ tile.description }}</p>
 </button>

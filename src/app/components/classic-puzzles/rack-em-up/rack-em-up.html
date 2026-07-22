@@ -16,10 +16,7 @@
 @if (view() === GAME_VIEW.INFO) {
   <div class="info-panel">
     <div class="brand-cap brand-cap-header" aria-hidden="true">
-      <div class="brand-cap-content">
-        <span class="brand-cap-title">Rack&#39;em up</span>
-        <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
-      </div>
+        <app-rack-em-up-logo class="brand-cap-content"></app-rack-em-up-logo>
     </div>
 
     <p class="description">
@@ -99,10 +96,7 @@
   }
 
   <div class="brand-cap brand-cap-top" aria-hidden="true">
-    <div class="brand-cap-content">
-      <span class="brand-cap-title">Rack&#39;em up</span>
-      <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
-    </div>
+    <app-rack-em-up-logo class="brand-cap-content"></app-rack-em-up-logo>
   </div>
 
   <div class="board-grid" [class.solved]="isSolved()">
@@ -148,10 +142,7 @@
   </div>
 
   <div class="brand-cap brand-cap-bottom" aria-hidden="true">
-    <div class="brand-cap-content">
-      <span class="brand-cap-title">Rack&#39;em up</span>
-      <span class="brand-cap-sub">TOMY&reg; POCKETFULS&trade;</span>
-    </div>
+    <app-rack-em-up-logo class="brand-cap-content"></app-rack-em-up-logo>
   </div>
   }
 </section>
