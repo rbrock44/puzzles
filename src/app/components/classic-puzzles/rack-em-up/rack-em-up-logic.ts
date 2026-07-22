@@ -1,11 +1,14 @@
+import type { Side, Direction } from '../../../objects/game';
+import { DIRECTION } from '../../../objects/game';
+
 export const ROWS = 4;
 export const COLS = 5;
 export const LEFT_COL = 0;
 export const RIGHT_COL = COLS - 1;
+export const VISUAL_ROWS = ROWS + 2;
+export const AUTO_SOLVE_MOVE_DELAY_MS = 450;
 
 export type Cell = number | null;
-export type Side = 'left' | 'right';
-export type Direction = 'up' | 'down';
 
 export function idx(row: number, col: number): number {
   return row * COLS + col;
@@ -22,7 +25,7 @@ export function solvedCells(): Cell[] {
 }
 
 export function canShiftState(plng: number, direction: Direction): boolean {
-  return direction === 'up' ? plng > -1 : plng < 1;
+  return direction === DIRECTION.UP ? plng > -1 : plng < 1;
 }
 
 export function isSolvedState(cells: Cell[], plngl: number, plngr: number): boolean {
