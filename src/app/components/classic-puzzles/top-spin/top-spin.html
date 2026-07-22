@@ -1,0 +1,93 @@
+<section class="widget-container" [class.wide]="view() === GAME_VIEW.INFO">
+  <div class="view-header">
+    <div>
+      <p class="eyebrow">Classic Puzzle</p>
+      <h1>Top Spin</h1>
+    </div>
+    <button type="button" class="info-btn" (click)="toggleView()" [attr.aria-pressed]="view() === GAME_VIEW.INFO">
+      @if (view() === GAME_VIEW.INFO) {
+      Back
+      } @else {
+      Info
+      }
+    </button>
+  </div>
+
+@if (view() === GAME_VIEW.INFO) {
+  <div class="info-panel">
+    <p class="description">
+      Top Spin is a ring of 20 numbered pieces. A turntable sits fixed in the
+      ring and can reverse the 4 pieces currently inside it. Rotating the ring
+      carries pieces through the turntable without changing their order,
+      spinning the turntable is the only move that changes it. The goal is to
+      get every piece in consecutive order all the way around.
+    </p>
+
+    <div class="info-columns">
+      @for (column of this.INFO_COLUMNS; track $index) {
+      <div class="info-col">
+        <h2>{{column.h2}}</h2>
+        @for (item of column.p; track $index) {
+        <p>
+          @if (item?.strong) {
+          <strong>{{item.strong}}</strong> &mdash;
+          }
+          <span [innerHTML]="item.text"></span>
+        </p>
+        }
+        @if (column?.trivia) {
+        <p class="trivia" [innerHTML]="column.trivia"></p>
+        }
+      </div>
+      }
+    </div>
+  </div>
+
+  <button type="button" class="new-game-btn" (click)="toggleView()">Back to game</button>
+  } @else {
+  <div class="meta-row">
+    <button type="button" class="new-game-btn" (click)="newGame()" [disabled]="isSpinning()">
+      New game
+    </button>
+
+    <div class="meta-actions">
+      <button type="button" class="rotate-btn rotate-left" (click)="rotate(SIDE.LEFT)" [disabled]="isSpinning()" aria-label="Rotate ring left">
+        &#8592; Rotate
+      </button>
+      <button type="button" class="spin-btn" (click)="spin()" [disabled]="isSpinning()" aria-label="Spin the turntable">
+        &#128260; Spin
+      </button>
+      <button type="button" class="rotate-btn rotate-right" (click)="rotate(SIDE.RIGHT)" [disabled]="isSpinning()" aria-label="Rotate ring right">
+        Rotate &#8594;
+      </button>
+    </div>
+
+    <span class="moves">Moves <strong>{{ moves() }}</strong></span>
+  </div>
+
+  @if (isSolved()) {
+  <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
+  }
+
+  <div class="board-wrap">
+    <div class="board-track" aria-hidden="true"></div>
+    <div class="board-ring" [class.solved]="isSolved()">
+      <div class="turntable" [class.disabled]="isSpinning()" [style.width.px]="turntableDiameterPx"
+        [style.height.px]="turntableDiameterPx" [style.transform]="turntableTransform()" role="button" tabindex="0"
+        [attr.aria-disabled]="isSpinning()" aria-label="Spin the turntable" (click)="spin()"
+        (keydown.enter)="spin()" (keydown.space)="spin()">
+        <div class="turntable-grip"></div>
+        <div class="turntable-face">
+          <span class="turntable-dot"></span>
+        </div>
+        <div class="turntable-track"></div>
+      </div>
+      @for (token of tokens(); track token.value) {
+        <div class="token" [class.in-turntable]="token.inTurntable" [style.transform]="token.transform">
+          <span class="token-value" [style.transform]="token.textTransform">{{ token.value }}</span>
+        </div>
+      }
+    </div>
+  </div>
+  }
+</section>

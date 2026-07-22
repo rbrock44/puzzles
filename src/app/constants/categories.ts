@@ -15,6 +15,12 @@ export const CATEGORIES: Category[] = [
                 description: 'Tilt and shift to sort the balls into solid-colour rows',
                 icon: '🎱',
                 param: 'rack-em-up'
+            },
+            {
+                title: 'Top Spin',
+                description: 'A Puzzle to Spin You in circles!',
+                icon: '🌀',
+                param: 'top-spin'
             }
         ]
     }

@@ -1,11 +1,11 @@
-<section class="widget-container" [class.wide]="view() === 'info'">
+<section class="widget-container" [class.wide]="view() === GAME_VIEW.INFO">
   <div class="view-header">
     <div>
       <p class="eyebrow">Classic Puzzle</p>
       <h1>Rack &#39;em Up</h1>
     </div>
     <button type="button" class="info-btn" (click)="toggleView()" [attr.aria-pressed]="view() === GAME_VIEW.INFO">
-      @if (view() === 'info') {
+      @if (view() === GAME_VIEW.INFO) {
       Back
       } @else {
       Info
