@@ -13,13 +13,13 @@ export const CATEGORIES: Category[] = [
             {
                 title: "Rack 'em Up",
                 description: 'Tilt and shift to sort the balls into solid-colour rows',
-                icon: '🎱',
+                icon: '',
                 param: 'rack-em-up'
             },
             {
                 title: 'Top Spin',
-                description: 'A Puzzle to Spin You in circles!',
-                icon: '🌀',
+                description: 'Just Put the Numbers in Order...',
+                icon: '',
                 param: 'top-spin'
             }
         ]

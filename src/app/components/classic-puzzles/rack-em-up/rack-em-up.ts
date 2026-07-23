@@ -28,7 +28,7 @@ interface VisualCell {
 
 const INFO_COLUMNS: InfoColumn[] = [
   {
-    h2: 'The moves', p: [
+    h2: 'The Moves', p: [
       { strong: 'Tilt (L / R)', text: 'slides every row\'s balls toward that side, gathering the gaps on the opposite side. This is the only move that actually relocates a ball.' },
       { strong: 'Shift (Ul / Ur / Dl / Dr)', text: 'the leftmost and rightmost columns are taller than the rest and can slide up or down one row, so each has three positions: up, centre, down. Shifting doesn\'t move any balls by itself, it just reconnects that edge column to a different row (you\'ll see a hatched wall appear where it\'s no longer lined up with a row). The <em>next</em> tilt is what actually carries a ball across, into, or out of the row it\'s now plugged into.' },
       { strong: 'Flip', text: 'turns the whole tray upside down. It doesn\'t rearrange anything relative to itself, just your view of it, so it\'s free and doesn\'t count as a move. It\'s mainly useful for reusing the same technique on rows you\'ve already solved once you flip them to the bottom.' },
@@ -122,8 +122,12 @@ export class RackEmUpComponent implements OnDestroy {
     }
 
     const delta = direction === DIRECTION.UP ? -1 : 1;
-    this.plngl.update(value => value + delta);
-  
+    if (side === SIDE.LEFT) {
+      this.plngl.update(value => value + delta);
+    } else {
+      this.plngr.update(value => value + delta);
+    }
+
     this.moves.update(count => count + 1);
   }
 
@@ -233,8 +237,11 @@ export class RackEmUpComponent implements OnDestroy {
         const canShift = direction === DIRECTION.UP ? current > -1 : current < 1;
         if (canShift) {
           const delta = direction === DIRECTION.UP ? -1 : 1;
-          plngr += delta;
-          
+          if (side === SIDE.LEFT) {
+            plngl += delta;
+          } else {
+            plngr += delta;
+          }
         }
       }
     }

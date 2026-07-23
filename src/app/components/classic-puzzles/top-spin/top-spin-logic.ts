@@ -55,7 +55,12 @@ export function spinTurntable(cells: Cell[]): Cell[] {
   return next;
 }
 
-export function isSolvedState(cells: Cell[]): boolean {
+export type SolveDirection = 'ascending' | 'descending';
+
+// Which way the numbers read consecutively around the ring, or null if
+// they don't (yet). Split out from a plain isSolvedState boolean so the UI
+// can name the specific mode the player finished in, not just "solved".
+export function solvedDirection(cells: Cell[]): SolveDirection | null {
   let ascending = true;
   let descending = true;
 
@@ -71,7 +76,14 @@ export function isSolvedState(cells: Cell[]): boolean {
     }
   }
 
-  return ascending || descending;
+  if (ascending) {
+    return 'ascending';
+  }
+  return descending ? 'descending' : null;
+}
+
+export function isSolvedState(cells: Cell[]): boolean {
+  return solvedDirection(cells) !== null;
 }
 
 function trackPerimeter(): number {

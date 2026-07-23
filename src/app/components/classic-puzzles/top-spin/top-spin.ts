@@ -8,13 +8,21 @@ import {
   TOKEN_DIAMETER,
   TURNTABLE_SIZE,
   TURNTABLE_START,
-  isSolvedState,
   rotate,
   slotPosition,
   solvedCells,
+  solvedDirection,
   spinTurntable,
   trackStep,
 } from './top-spin-logic';
+
+// Names for the four self-imposed modes described in the info panel: a
+// number direction paired with which way the turntable's purple dot ends
+// up facing (see turntableTransform, angle 0 leaves the dot at the bottom).
+const MODE_NAMES = {
+  ascending: { top: 'Unscramble', bottom: 'Unscramble Flip' },
+  descending: { top: 'Reverse', bottom: 'Reverse Flip' },
+} as const;
 
 interface Token {
   value: Cell;
@@ -25,7 +33,7 @@ interface Token {
 
 const INFO_COLUMNS: InfoColumn[] = [
   {
-    h2: 'The moves', p: [
+    h2: 'The Moves', p: [
       { strong: 'Rotate (left / right)', text: 'slides every piece one slot around the ring. The turntable itself never moves, pieces travel through it as the ring turns.' },
       { strong: 'Spin', text: 'reverses the order of whichever 4 pieces are currently sitting inside the turntable window. This is the only move that changes a piece\'s order relative to its neighbours, everything else just carries pieces past it.' },
     ]
@@ -34,6 +42,7 @@ const INFO_COLUMNS: InfoColumn[] = [
     h2: 'Strategy', trivia: 'Every shuffle in this app is generated using only legal rotate and spin moves, so no matter how scrambled it looks, it\'s always possible to spin and rotate your way back to order.', p: [
       { text: 'Rotate a pair of out-of-order neighbours into the turntable window and spin to swap their positions, then rotate the next pair into place and repeat. Working through the ring a couple of pieces at a time is usually enough to untangle it.' },
       { text: 'The ring counts as solved once the numbers read consecutively all the way around, either forwards or backwards, so you don\'t need to hunt for a specific starting slot, just get every neighbour in the right order relative to the next.' },
+      { text: 'For a stricter target, set yourself one of four named modes, each pairing a number direction with a turntable finish. The default, <strong>Unscramble</strong>, is 1 to 20 going right with the turntable\'s purple dot finishing at the top; <strong>Unscramble Flip</strong> is the same order but with the dot finishing at the bottom; <strong>Reverse</strong> runs 20 down to 1 going right with the dot at the top; and <strong>Reverse Flip</strong> pairs that same reversed order with the dot at the bottom.' },
     ]
   },
 ]
@@ -56,7 +65,8 @@ export class TopSpinComponent {
   cells = signal<Cell[]>(this.generateScrambled());
   moves = signal<number>(0);
 
-  isSolved = computed<boolean>(() => isSolvedState(this.cells()));
+  private solveDirection = computed(() => solvedDirection(this.cells()));
+  isSolved = computed<boolean>(() => this.solveDirection() !== null);
 
   // The turntable is drawn as a circle straddling a straight, matching the
   // real toy: a ridged grip half poking above the track and a smooth face
@@ -69,6 +79,18 @@ export class TopSpinComponent {
   turntableTransform = computed<string>(() => {
     const angle = this.turntableSpinCount() * 180;
     return `translate(-50%, calc(-50% - ${CAP_RADIUS}px)) rotate(${angle}deg)`;
+  });
+
+  // Names the mode the player actually finished in (see MODE_NAMES): the
+  // ring's own solved direction paired with which way the turntable's dot
+  // happens to be facing when they land on it. Null unless isSolved().
+  solvedMode = computed<string | null>(() => {
+    const direction = this.solveDirection();
+    if (!direction) {
+      return null;
+    }
+    const dotAtTop = this.turntableSpinCount() % 2 === 1;
+    return MODE_NAMES[direction][dotAtTop ? 'top' : 'bottom'];
   });
 
   // Each piece that's ever been caught in a spin keeps a running half-turn
