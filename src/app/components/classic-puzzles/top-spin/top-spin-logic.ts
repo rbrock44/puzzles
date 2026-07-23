@@ -86,7 +86,7 @@ export function isSolvedState(cells: Cell[]): boolean {
   return solvedDirection(cells) !== null;
 }
 
-function trackPerimeter(): number {
+export function trackPerimeter(): number {
   return 2 * STRAIGHT_LENGTH + 2 * Math.PI * CAP_RADIUS;
 }
 
@@ -126,4 +126,47 @@ export function slotPosition(index: number): TrackPoint {
 
   const phi = t / CAP_RADIUS;
   return { x: -half - CAP_RADIUS * Math.sin(phi), y: -CAP_RADIUS * Math.cos(phi) };
+}
+
+// Inverse of the raw t -> point mapping inside slotPosition: given any point
+// (typically a drag pointer, which during a fast drag can land well off the
+// path between two sparse mousemove samples), returns the t it maps to.
+//
+// This classifies the point into one of the track's 4 zones by simple
+// position (which half of the middle strip, or off one end) rather than by
+// which of the 4 segments it's nearest to. Nearest-segment is ambiguous (and
+// so unstable frame-to-frame) for points away from the track, e.g. one near
+// the ring's centre is almost equidistant from all 4 segments; a fast drag
+// samples exactly those in-between points, so that ambiguity showed up as
+// the ring briefly rotating the wrong way or snapping through extra slots.
+// Zone-by-position has no such ambiguity: every point in the plane, however
+// far from the track, falls in exactly one zone, and maps continuously to a
+// t within it, so it stays stable regardless of how far a drag jumps between
+// samples.
+export function closestT(point: TrackPoint): number {
+  const half = STRAIGHT_LENGTH / 2;
+  const capArc = Math.PI * CAP_RADIUS;
+  const { x, y } = point;
+
+  if (x >= half) {
+    // Right cap zone: angle around (half, 0), phi 0 at the bottom
+    // straight's end, phi pi at the top straight's start.
+    const phi = Math.min(Math.max(Math.atan2(x - half, y), 0), Math.PI);
+    return STRAIGHT_LENGTH + CAP_RADIUS * phi;
+  }
+
+  if (x <= -half) {
+    // Left cap zone: angle around (-half, 0), phi 0 at the top straight's
+    // end, phi pi back at the bottom straight's start.
+    const phi = Math.min(Math.max(Math.atan2(-(x + half), -y), 0), Math.PI);
+    return STRAIGHT_LENGTH + capArc + STRAIGHT_LENGTH + CAP_RADIUS * phi;
+  }
+
+  if (y >= 0) {
+    // Bottom straight: y = CAP_RADIUS, x from -half to half.
+    return x + half;
+  }
+
+  // Top straight: y = -CAP_RADIUS, x from half down to -half.
+  return STRAIGHT_LENGTH + capArc + (half - x);
 }

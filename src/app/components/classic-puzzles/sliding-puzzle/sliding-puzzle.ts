@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SettingsService } from '../../../services/settings';
 
 const SIZE = 4;
 const BLANK = 0;
+const TILE_PARAM = 'sliding-puzzle';
 
 @Component({
   selector: 'app-sliding-puzzle',
@@ -13,6 +15,12 @@ const BLANK = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SlidingPuzzleComponent {
+  readonly categoryName: string;
+
+  constructor(private settingsService: SettingsService) {
+    this.categoryName = this.settingsService.getCategoryName(TILE_PARAM);
+  }
+
   board = signal<number[]>(this.shuffled());
   moves = signal<number>(0);
 

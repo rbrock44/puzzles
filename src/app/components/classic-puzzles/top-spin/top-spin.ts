@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, signal, viewChild } from '@angular/core';
 import { InfoColumn } from '../../../objects/info';
 import { GAME_VIEW, GameView, SIDE, Side } from '../../../objects/game';
 import {
@@ -8,13 +8,18 @@ import {
   TOKEN_DIAMETER,
   TURNTABLE_SIZE,
   TURNTABLE_START,
+  closestT,
   rotate,
   slotPosition,
   solvedCells,
   solvedDirection,
   spinTurntable,
+  trackPerimeter,
   trackStep,
 } from './top-spin-logic';
+import { SettingsService } from '../../../services/settings';
+
+const TILE_PARAM = 'top-spin';
 
 // Names for the four self-imposed modes described in the info panel: a
 // number direction paired with which way the turntable's purple dot ends
@@ -59,7 +64,11 @@ export class TopSpinComponent {
   readonly GAME_VIEW = GAME_VIEW;
   readonly INFO_COLUMNS = INFO_COLUMNS;
   readonly SIDE = SIDE;
+  readonly categoryName: string;
 
+  constructor(private settingsService: SettingsService) {
+    this.categoryName = this.settingsService.getCategoryName(TILE_PARAM);
+  }
 
   view = signal<GameView>(GAME_VIEW.PLAY);
   cells = signal<Cell[]>(this.generateScrambled());
@@ -107,6 +116,19 @@ export class TopSpinComponent {
   isSpinning = signal(false);
   private static readonly SPIN_ANIM_MS = 400;
 
+  private boardRing = viewChild<ElementRef<HTMLElement>>('boardRing');
+
+  // Live continuous position of a rotate-by-drag gesture, in slot-index
+  // units: added to every token's committed index (the whole ring is a
+  // rigid loop, so grabbing any one piece drags all of them). Reset to 0
+  // once a drag commits, since by then cells() already reflects it.
+  isDragging = signal(false);
+  private dragOffset = signal(0);
+  private dragCenter: { x: number; y: number } | null = null;
+  private dragLastT = 0;
+  private readonly onPointerMoveBound = (event: PointerEvent) => this.onPointerMove(event);
+  private readonly onPointerEndBound = () => this.onPointerEnd();
+
   // Always built in the same fixed value order (1..20), never in cells'
   // current order, so the @for below never needs to reorder DOM nodes: only
   // each token's own bound transform changes. Iterating in cells() order
@@ -118,12 +140,20 @@ export class TopSpinComponent {
   tokens = computed<Token[]>(() => {
     const cells = this.cells();
     const halfTurns = this.pieceHalfTurns();
+    const dragOffset = this.dragOffset();
     const indexByValue = new Map<Cell, number>();
     cells.forEach((value, index) => indexByValue.set(value, index));
 
     return solvedCells().map(value => {
       const index = indexByValue.get(value) as number;
-      const { x, y } = slotPosition(index);
+      // The ring is rigid, so a rotate-drag in progress shifts every token's
+      // rendered position by the same continuous offset, while inTurntable
+      // (which decides which transform branch below applies) stays pinned
+      // to the committed index. The two branches agree on position for any
+      // index anyway, so this only matters for the flip transform's parity
+      // trick, which should stay keyed to actual game state, not a
+      // still-uncommitted drag.
+      const { x, y } = slotPosition(index + dragOffset);
       const inTurntable = index >= TURNTABLE_START && index < TURNTABLE_START + TURNTABLE_SIZE;
       // Flip vertically so the turntable (slot 0) sits on the top straight,
       // and give each piece a small fixed tilt like loose plastic caps.
@@ -168,15 +198,87 @@ export class TopSpinComponent {
   }
 
   rotate(direction: Side): void {
-    if (this.isSpinning()) {
+    if (this.isSpinning() || this.isDragging()) {
       return;
     }
     this.cells.set(rotate(this.cells(), direction));
     this.moves.update(count => count + 1);
   }
 
+  // Grabbing any token and dragging it along the track rotates the whole
+  // ring, same as repeated Rotate clicks: tokens() renders every piece
+  // offset by dragOffset while the gesture is live, then onPointerEnd
+  // commits it as whole-slot rotate() calls, so cells stays the single
+  // source of truth and there's nothing fractional to reconcile.
+  onTokenPointerDown(event: PointerEvent, value: Cell): void {
+    if (this.isSpinning() || this.isDragging()) {
+      return;
+    }
+    const ring = this.boardRing()?.nativeElement;
+    if (!ring) {
+      return;
+    }
+    event.preventDefault();
+
+    const rect = ring.getBoundingClientRect();
+    this.dragCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    this.dragLastT = closestT(this.pointerToTrackPoint(event));
+    this.dragOffset.set(0);
+    this.isDragging.set(true);
+
+    window.addEventListener('pointermove', this.onPointerMoveBound);
+    window.addEventListener('pointerup', this.onPointerEndBound);
+    window.addEventListener('pointercancel', this.onPointerEndBound);
+  }
+
+  // Tokens are rendered with translate(x, -y) (see tokens()), so screen
+  // coordinates need the y flipped back to get the logical point that
+  // slotPosition/closestT work in.
+  private pointerToTrackPoint(event: PointerEvent): { x: number; y: number } {
+    const center = this.dragCenter as { x: number; y: number };
+    return { x: event.clientX - center.x, y: -(event.clientY - center.y) };
+  }
+
+  private onPointerMove(event: PointerEvent): void {
+    const t = closestT(this.pointerToTrackPoint(event));
+    const perimeter = trackPerimeter();
+
+    // Consecutive pointermove events are always close together on the
+    // track, so the shortest signed distance between them is the one the
+    // pointer actually travelled, wrapping the seam at t=0/perimeter.
+    let delta = t - this.dragLastT;
+    if (delta > perimeter / 2) {
+      delta -= perimeter;
+    } else if (delta < -perimeter / 2) {
+      delta += perimeter;
+    }
+    this.dragLastT = t;
+    this.dragOffset.update(offset => offset + delta / trackStep());
+  }
+
+  private onPointerEnd(): void {
+    window.removeEventListener('pointermove', this.onPointerMoveBound);
+    window.removeEventListener('pointerup', this.onPointerEndBound);
+    window.removeEventListener('pointercancel', this.onPointerEndBound);
+
+    const steps = Math.round(this.dragOffset());
+    if (steps !== 0) {
+      const direction = steps > 0 ? SIDE.RIGHT : SIDE.LEFT;
+      let cells = this.cells();
+      for (let i = 0; i < Math.abs(steps); i++) {
+        cells = rotate(cells, direction);
+      }
+      this.cells.set(cells);
+      this.moves.update(count => count + Math.abs(steps));
+    }
+
+    this.dragOffset.set(0);
+    this.isDragging.set(false);
+    this.dragCenter = null;
+  }
+
   spin(): void {
-    if (this.isSpinning()) {
+    if (this.isSpinning() || this.isDragging()) {
       return;
     }
     this.isSpinning.set(true);
@@ -199,7 +301,7 @@ export class TopSpinComponent {
   }
 
   newGame(): void {
-    if (this.isSpinning()) {
+    if (this.isSpinning() || this.isDragging()) {
       return;
     }
     this.cells.set(this.generateScrambled());
