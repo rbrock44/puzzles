@@ -3,6 +3,7 @@
     <div>
       <p class="eyebrow">Classic Puzzle</p>
       <h1>Top Spin</h1>
+      <p class="description">A Puzzle to Spin You in Circles!</p>
     </div>
     <button type="button" class="info-btn" (click)="toggleView()" [attr.aria-pressed]="view() === GAME_VIEW.INFO">
       @if (view() === GAME_VIEW.INFO) {
@@ -20,7 +21,7 @@
       ring and can reverse the 4 pieces currently inside it. Rotating the ring
       carries pieces through the turntable without changing their order,
       spinning the turntable is the only move that changes it. The goal is to
-      get every piece in consecutive order all the way around.
+      get every piece in consecutive order all the way around in either direction.
     </p>
 
     <div class="info-columns">
@@ -66,7 +67,7 @@
   </div>
 
   @if (isSolved()) {
-  <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
+  <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves &mdash; {{ solvedMode() }}!</p>
   }
 
   <div class="board-wrap">
