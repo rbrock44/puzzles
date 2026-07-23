@@ -27,6 +27,11 @@ export class SettingsService {
         }
     }
 
+    getCategoryName(tileParam: string): string {
+        const category = this.categories.find(c => c.tiles.some(t => t.param === tileParam));
+        return category?.name ?? '';
+    }
+
     resetUrl(): void {
         this.location.replaceState(this.buildUrl());
     }

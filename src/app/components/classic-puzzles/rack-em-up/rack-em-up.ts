@@ -18,6 +18,9 @@ import {
 import { SolverMove, solveRackEmUp } from './rack-em-up-solver';
 import { DIRECTION, Direction, GAME_VIEW, GameView, Side, SIDE, SOLVER_STATE, SolverState } from '../../../objects/game';
 import { RackEmUpLogoComponent } from './rack-em-up-logo/rack-em-up-logo';
+import { SettingsService } from '../../../services/settings';
+
+const TILE_PARAM = 'rack-em-up';
 
 type VisualKind = 'ball' | 'blank' | 'wall' | 'cap';
 
@@ -57,6 +60,11 @@ export class RackEmUpComponent implements OnDestroy {
   readonly GAME_VIEW = GAME_VIEW;
   readonly SOLVER_STATE = SOLVER_STATE;
   readonly INFO_COLUMNS = INFO_COLUMNS;
+  readonly categoryName: string;
+
+  constructor(private settingsService: SettingsService) {
+    this.categoryName = this.settingsService.getCategoryName(TILE_PARAM);
+  }
 
   view = signal<GameView>(GAME_VIEW.PLAY);
   cells = signal<Cell[]>(this.initial.cells);

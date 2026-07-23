@@ -379,6 +379,19 @@ h1 {
     inset 0 -3px 4px rgba(0, 0, 0, 0.15),
     0 2px 3px rgba(0, 0, 0, 0.2);
   transition: transform 0.4s ease;
+  cursor: grab;
+  // Otherwise a touch drag also tries to scroll/pinch the page instead of
+  // just rotating the ring.
+  touch-action: none;
+}
+
+// While a rotate-drag is live, tokens() recomputes every token's transform
+// on each pointermove: the transition above would then animate toward a
+// constantly-moving target and lag behind the pointer instead of tracking
+// it 1:1.
+.board-ring.dragging .token {
+  transition: none;
+  cursor: grabbing;
 }
 
 .token-value {
