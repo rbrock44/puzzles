@@ -238,6 +238,7 @@ h1 {
   width: 380px;
   height: 230px;
   margin: 1.5rem auto 0.5rem;
+  --spin-track: color-mix(in srgb, var(--spin-frame-deep) 45%, var(--spin-frame));
 }
 
 .board-track {
@@ -257,7 +258,7 @@ h1 {
   content: '';
   position: absolute;
   inset: 14px;
-  background: color-mix(in srgb, var(--spin-frame-deep) 45%, var(--spin-frame));
+  background: var(--spin-track);
   border-radius: 50px;
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
 }
@@ -274,7 +275,17 @@ h1 {
   border-radius: 50%;
   overflow: hidden;
   z-index: 1;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  // A trim reading as the track's own channel wrapping around the disc,
+  // matching .mini-turntable in top-spin-logo.scss: solid everywhere, but
+  // only visible where the disc actually pokes clear of the track
+  // underneath it. Uses --spin-track (the same colour as the channel
+  // itself, not the lighter outer frame) since most of the disc sits over
+  // the channel, not the frame - matching the lighter frame tone here left
+  // a visible light ring against the darker channel around most of the disc.
+  box-shadow:
+    0 0 0 4px var(--spin-track),
+    0 0 0 6px var(--spin-track),
+    0 1px 3px rgba(0, 0, 0, 0.2);
   // Kept in step with the .token transition below and the component's
   // SPIN_ANIM_MS, so the disc and the 4 pieces inside it turn together.
   transition: transform 0.4s ease;
