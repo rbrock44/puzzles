@@ -15,6 +15,14 @@
     transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
+.tile-top-spin {
+    max-width: 275px;
+}
+
+.tile-rack-em-up {
+    max-width: 300px;
+}
+
 .tile:hover,
 .tile:focus-visible {
     transform: translateY(-4px) rotate(-0.6deg);

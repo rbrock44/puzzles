@@ -3,4 +3,6 @@ export interface Tile {
   description: string;
   icon: string;
   param: string;
+  centered?: boolean;
+  className?: string;
 }

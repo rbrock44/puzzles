@@ -23,7 +23,7 @@ const TILE_PARAM = 'top-spin';
 
 // Names for the four self-imposed modes described in the info panel: a
 // number direction paired with which way the turntable's purple dot ends
-// up facing (see turntableTransform, angle 0 leaves the dot at the bottom).
+// up facing (see turntableTransform, angle 0 leaves the dot at the top).
 const MODE_NAMES = {
   ascending: { top: 'Unscramble', bottom: 'Unscramble Flip' },
   descending: { top: 'Reverse', bottom: 'Reverse Flip' },
@@ -78,7 +78,7 @@ export class TopSpinComponent {
   isSolved = computed<boolean>(() => this.solveDirection() !== null);
 
   // The turntable is drawn as a circle straddling a straight, matching the
-  // real toy: a ridged grip half poking above the track and a smooth face
+  // real toy: a smooth face poking above the track and a ridged grip half
   // below it, sized to hold all 4 pieces in its window.
   readonly turntableDiameterPx = (TURNTABLE_SIZE - 1) * trackStep() + TOKEN_DIAMETER;
 
@@ -98,7 +98,7 @@ export class TopSpinComponent {
     if (!direction) {
       return null;
     }
-    const dotAtTop = this.turntableSpinCount() % 2 === 1;
+    const dotAtTop = this.turntableSpinCount() % 2 === 0;
     return MODE_NAMES[direction][dotAtTop ? 'top' : 'bottom'];
   });
 

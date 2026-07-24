@@ -289,19 +289,20 @@ h1 {
   position: relative;
   height: 50%;
   background: var(--spin-purple);
-  border-bottom: 1px solid var(--spin-purple-deep);
+  border-top: 1px solid var(--spin-purple-deep);
   overflow: hidden;
 }
 
 // A smaller circle, concentric with the disc, holding the stripe pattern.
 // Positioned so its centre sits exactly on the turntable's centre (the
-// grip/face divider); the grip's overflow:hidden then shows only its top
-// arc, so the padding follows the disc's curve instead of a straight inset.
+// grip/face divider, now the grip's own top edge since the face sits
+// above it); the grip's overflow:hidden then shows only its bottom arc,
+// so the padding follows the disc's curve instead of a straight inset.
 .turntable-grip::before {
   content: '';
   position: absolute;
   left: 50%;
-  top: 100%;
+  top: 0;
   width: calc(100% - 10px);
   aspect-ratio: 1 / 1;
   transform: translate(-50%, -50%);
@@ -315,7 +316,7 @@ h1 {
   );
 }
 
-// Solid strip masking the bottom of the stripe circle, so the lines stop
+// Solid strip masking the top of the stripe circle, so the lines stop
 // short of the darker turntable-track band instead of running into it.
 // turntable-track reaches 16px into the grip, so this has to clear that
 // or it just gets hidden underneath the track with no visible effect.
@@ -324,7 +325,7 @@ h1 {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  top: 0;
   height: 20px;
   background: var(--spin-purple);
 }
@@ -333,9 +334,9 @@ h1 {
   height: 50%;
   background: var(--spin-purple);
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
-  padding-bottom: 15%;
+  padding-top: 15%;
 }
 
 .turntable-dot {

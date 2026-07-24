@@ -2,38 +2,225 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.4rem;
 }
 
+.mini-board {
+  position: relative;
+  flex-shrink: 0;
+}
+
+// Matches the original box art's logotype: chunky uppercase letters in flat
+// yellow with a dark outline, like the physical box's colours in
+// .mini-track/.mini-turntable above, this is fixed regardless of site theme
+// rather than pulled from --ink, which flips light/dark with it.
 .logo-title {
+  display: inline-flex;
+  align-items: center;
   font-family: 'Bungee', var(--font-display), cursive;
   font-style: normal;
   font-weight: 400;
-  font-size: 1.4rem;
-  line-height: 1.2;
-  color: var(--spin-purple-deep);
-  letter-spacing: 0.02em;
-  background: linear-gradient(120deg, var(--spin-purple-deep) 35%, var(--spin-yellow-deep) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.logo-sub {
-  margin-top: 0.2rem;
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 0.6rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-:host(.compact) .logo-title {
   font-size: 1.05rem;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--spin-yellow);
+  -webkit-text-stroke: 1.5px #141b2e;
+  paint-order: stroke fill;
+  text-shadow: 1px 1.5px 0 #141b2e;
+  // The parent .tile rotates on hover; without its own layer, the bars'
+  // border-box edges and the S's font glyph can get rasterized with
+  // slightly different subpixel snapping at that fractional angle, which
+  // reads as the bars stepping a pixel or two away from the S. Forcing this
+  // whole wordmark onto one composited layer makes it rotate as a single
+  // rasterized unit instead, so bars and S move together exactly.
+  transform: translateZ(0);
 }
 
-:host(.compact) .logo-sub {
-  margin-top: 0.1rem;
-  font-size: 0.45rem;
-  letter-spacing: 0.16em;
+// TOP and PIN each pair their word with a rounded bar (the box art's
+// flattened ribbon-S, read as an underline/overline rather than a letter):
+// stacked in a column so the bar sits flush against its word, then the
+// whole group is pulled toward the S so the bar overlaps and reads as
+// plugging into it.
+.logo-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+// TOP stays in front so the S's lower curve reads as tucking behind it;
+// PIN sits behind so the S's upper curve reads as reaching over it - the
+// same swap the box art's lettering uses.
+.logo-group--top {
+  z-index: 2;
+  margin-right: -0.32em;
+}
+
+.logo-group--pin {
+  z-index: 0;
+  margin-left: -0.32em;
+}
+
+.logo-bar {
+  height: 0.5em;
+  border-radius: 999px;
+  background: var(--spin-yellow);
+  border: 1.5px solid #141b2e;
+}
+
+// The edge that overlaps the S drops its border entirely so the seam
+// between bar and letter is just one continuous fill instead of the bar's
+// own outline cutting across it - only the outer, unobscured end keeps its
+// rounded cap and stroke.
+.logo-group--top .logo-bar {
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  // A few px of deliberate slack past the border's own 1.5px, so a pixel or
+  // two of subpixel drift under the hover rotation (see .logo-title) still
+  // lands inside the S's fill instead of opening a visible gap.
+  margin-right: -3px;
+}
+
+.logo-group--pin .logo-bar {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: -3px;
+}
+
+// The oversized S from the original box logotype: centred on the words'
+// cap-height rather than the baseline so it bulges both above and below
+// them, tall enough that the two bars above read as running into its
+// curves instead of just floating past its sides.
+.logo-s {
+  position: relative;
+  font-size: 1.9em;
+  line-height: 1;
+}
+
+.mini-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: var(--spin-frame);
+  border: 1px solid var(--spin-frame-deep);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+.mini-turntable {
+  position: absolute;
+  z-index: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--spin-purple);
+  border: 1px solid var(--spin-purple-deep);
+  // A grey trim reading as the track's own padding around the disc: solid
+  // everywhere, but only visible where the disc actually pokes clear of
+  // .mini-track (its top half) - past the track's edge it just blends into
+  // the track's own colour underneath.
+  box-shadow:
+    0 0 0 3px var(--spin-frame),
+    0 0 0 4px var(--spin-frame),
+    0 2px 3px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px var(--spin-frame);
+}
+
+// Mirrors the real board's turntable-face/turntable-dot: the dot sits near
+// the top pole and the ridged lines are on the bottom, same as the full
+// board's disc at rest.
+.mini-turntable-face {
+  position: absolute;
+  left: 0;
+  top: -5px;
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15%;
+}
+
+.mini-turntable-dot {
+  width: 24%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: var(--spin-purple-deep);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+// Mirrors the real board's turntable-grip: a circle concentric with the
+// whole disc, clipped by this half's overflow: hidden so only the arc
+// facing the disc's centre shows through as a set of ridged lines.
+.mini-turntable-grip {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+}
+
+.mini-turntable-grip::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: calc(100% - 4px);
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--spin-purple-deep) 0,
+    var(--spin-purple-deep) 2px,
+    var(--spin-purple) 2px,
+    var(--spin-purple) 4px
+  );
+}
+
+// The darker window band the pieces pass through, matching the real
+// board's .turntable-track: full width so it reads as running edge to edge
+// under the disc's light purple face, clipped to the circle by the
+// turntable's own overflow: hidden.
+.mini-turntable-track {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 20%;
+  transform: translateY(-50%);
+  background: var(--spin-purple-deep);
+}
+
+.mini-token {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #fde385 0%, #f6c94a 55%, #d9a316 100%);
+  border: 1px solid var(--spin-yellow-deep);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 1px 1px rgba(0, 0, 0, 0.2);
+  font-family: var(--font-body);
+  font-weight: 800;
+  line-height: 1;
+  color: #3a2a05;
+}
+
+.mini-token.in-turntable {
+  border-color: var(--spin-purple-deep);
+}
+
+.top-bar {
+  margin-top: 4px;
+  margin-bottom: 0px;
+}
+
+.bottom-bar {
+  margin-bottom: 3px;
+  margin-top: 0px;
 }

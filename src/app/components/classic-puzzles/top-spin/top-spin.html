@@ -77,10 +77,10 @@
         [style.height.px]="turntableDiameterPx" [style.transform]="turntableTransform()" role="button" tabindex="0"
         [attr.aria-disabled]="isSpinning()" aria-label="Spin the turntable" (click)="spin()"
         (keydown.enter)="spin()" (keydown.space)="spin()">
-        <div class="turntable-grip"></div>
         <div class="turntable-face">
           <span class="turntable-dot"></span>
         </div>
+        <div class="turntable-grip"></div>
         <div class="turntable-track"></div>
       </div>
       @for (token of tokens(); track token.value) {
