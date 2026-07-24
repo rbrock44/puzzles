@@ -32,6 +32,11 @@ export class SettingsService {
         return category?.name ?? '';
     }
 
+    getStorageKey(tileParam: string): string {
+        const tile = this.categories.flatMap(c => c.tiles).find(t => t.param === tileParam);
+        return tile?.storageKey ?? '';
+    }
+
     resetUrl(): void {
         this.location.replaceState(this.buildUrl());
     }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, computed, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { InfoColumn } from '../../../objects/info';
 import { GAME_VIEW, GameView, SIDE, Side } from '../../../objects/game';
 import {
@@ -18,8 +18,16 @@ import {
   trackStep,
 } from './top-spin-logic';
 import { SettingsService } from '../../../services/settings';
+import { GameStateService } from '../../../services/game-state';
 
 const TILE_PARAM = 'top-spin';
+
+interface TopSpinSaveState {
+  cells: Cell[];
+  moves: number;
+  turntableSpinCount: number;
+  pieceHalfTurns: [Cell, number][];
+}
 
 // Names for the four self-imposed modes described in the info panel: a
 // number direction paired with which way the turntable's purple dot ends
@@ -66,13 +74,27 @@ export class TopSpinComponent {
   readonly SIDE = SIDE;
   readonly categoryName: string;
 
-  constructor(private settingsService: SettingsService) {
+  private settingsService = inject(SettingsService);
+  private gameState = inject(GameStateService);
+  private storageKey = this.settingsService.getStorageKey(TILE_PARAM);
+  private saved = this.gameState.load<TopSpinSaveState>(this.storageKey);
+
+  constructor() {
     this.categoryName = this.settingsService.getCategoryName(TILE_PARAM);
+
+    effect(() => {
+      this.gameState.save<TopSpinSaveState>(this.storageKey, {
+        cells: this.cells(),
+        moves: this.moves(),
+        turntableSpinCount: this.turntableSpinCount(),
+        pieceHalfTurns: [...this.pieceHalfTurns()],
+      });
+    });
   }
 
   view = signal<GameView>(GAME_VIEW.PLAY);
-  cells = signal<Cell[]>(this.generateScrambled());
-  moves = signal<number>(0);
+  cells = signal<Cell[]>(this.saved?.cells ?? this.generateScrambled());
+  moves = signal<number>(this.saved?.moves ?? 0);
 
   private solveDirection = computed(() => solvedDirection(this.cells()));
   isSolved = computed<boolean>(() => this.solveDirection() !== null);
@@ -84,7 +106,7 @@ export class TopSpinComponent {
 
   // Every spin click keeps turning the disc another half-turn rather than
   // resetting, so repeated spins visibly keep spinning it further.
-  private turntableSpinCount = signal(0);
+  private turntableSpinCount = signal(this.saved?.turntableSpinCount ?? 0);
   turntableTransform = computed<string>(() => {
     const angle = this.turntableSpinCount() * 180;
     return `translate(-50%, calc(-50% - ${CAP_RADIUS}px)) rotate(${angle}deg)`;
@@ -112,7 +134,7 @@ export class TopSpinComponent {
   // two independent property changes and animated both in full, which played
   // out as a second, unwanted spin. Counting up forever (like the disc does)
   // means there is never a reset to animate away in the first place.
-  private pieceHalfTurns = signal<ReadonlyMap<Cell, number>>(new Map());
+  private pieceHalfTurns = signal<ReadonlyMap<Cell, number>>(new Map(this.saved?.pieceHalfTurns ?? []));
   isSpinning = signal(false);
   private static readonly SPIN_ANIM_MS = 400;
 

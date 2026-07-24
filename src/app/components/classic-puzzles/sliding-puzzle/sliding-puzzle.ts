@@ -1,10 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SettingsService } from '../../../services/settings';
+import { GameStateService } from '../../../services/game-state';
 
 const SIZE = 4;
 const BLANK = 0;
 const TILE_PARAM = 'sliding-puzzle';
+
+interface SlidingPuzzleSaveState {
+  board: number[];
+  moves: number;
+}
 
 @Component({
   selector: 'app-sliding-puzzle',
@@ -17,12 +23,24 @@ const TILE_PARAM = 'sliding-puzzle';
 export class SlidingPuzzleComponent {
   readonly categoryName: string;
 
-  constructor(private settingsService: SettingsService) {
+  private settingsService = inject(SettingsService);
+  private gameState = inject(GameStateService);
+  private storageKey = this.settingsService.getStorageKey(TILE_PARAM);
+  private saved = this.gameState.load<SlidingPuzzleSaveState>(this.storageKey);
+
+  constructor() {
     this.categoryName = this.settingsService.getCategoryName(TILE_PARAM);
+
+    effect(() => {
+      this.gameState.save<SlidingPuzzleSaveState>(this.storageKey, {
+        board: this.board(),
+        moves: this.moves(),
+      });
+    });
   }
 
-  board = signal<number[]>(this.shuffled());
-  moves = signal<number>(0);
+  board = signal<number[]>(this.saved?.board ?? this.shuffled());
+  moves = signal<number>(this.saved?.moves ?? 0);
 
   isSolved = computed<boolean>(() => {
     const tiles = this.board();

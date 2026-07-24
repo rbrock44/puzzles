@@ -21,7 +21,8 @@ export class TileComponent {
     title: '',
     description: '',
     icon: '',
-    param: ''
+    param: '',
+    storageKey: ''
   };
 
   constructor(

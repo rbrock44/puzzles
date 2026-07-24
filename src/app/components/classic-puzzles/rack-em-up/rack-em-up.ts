@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { InfoColumn } from '../../../objects/info';
 import {
   AUTO_SOLVE_MOVE_DELAY_MS,
@@ -19,8 +19,16 @@ import { SolverMove, solveRackEmUp } from './rack-em-up-solver';
 import { DIRECTION, Direction, GAME_VIEW, GameView, Side, SIDE, SOLVER_STATE, SolverState } from '../../../objects/game';
 import { RackEmUpLogoComponent } from './rack-em-up-logo/rack-em-up-logo';
 import { SettingsService } from '../../../services/settings';
+import { GameStateService } from '../../../services/game-state';
 
 const TILE_PARAM = 'rack-em-up';
+
+interface RackEmUpSaveState {
+  cells: Cell[];
+  plngl: number;
+  plngr: number;
+  moves: number;
+}
 
 type VisualKind = 'ball' | 'blank' | 'wall' | 'cap';
 
@@ -54,7 +62,6 @@ const INFO_COLUMNS: InfoColumn[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RackEmUpComponent implements OnDestroy {
-  private initial = this.generateScrambled();
   private autoSolveTimer: ReturnType<typeof setTimeout> | null = null;
 
   readonly GAME_VIEW = GAME_VIEW;
@@ -62,15 +69,30 @@ export class RackEmUpComponent implements OnDestroy {
   readonly INFO_COLUMNS = INFO_COLUMNS;
   readonly categoryName: string;
 
-  constructor(private settingsService: SettingsService) {
+  private settingsService = inject(SettingsService);
+  private gameState = inject(GameStateService);
+  private storageKey = this.settingsService.getStorageKey(TILE_PARAM);
+  private saved = this.gameState.load<RackEmUpSaveState>(this.storageKey);
+  private initial = this.saved ?? this.generateScrambled();
+
+  constructor() {
     this.categoryName = this.settingsService.getCategoryName(TILE_PARAM);
+
+    effect(() => {
+      this.gameState.save<RackEmUpSaveState>(this.storageKey, {
+        cells: this.cells(),
+        plngl: this.plngl(),
+        plngr: this.plngr(),
+        moves: this.moves(),
+      });
+    });
   }
 
   view = signal<GameView>(GAME_VIEW.PLAY);
   cells = signal<Cell[]>(this.initial.cells);
   plngl = signal<number>(this.initial.plngl);
   plngr = signal<number>(this.initial.plngr);
-  moves = signal<number>(0);
+  moves = signal<number>(this.saved?.moves ?? 0);
   solverState = signal<SolverState>(SOLVER_STATE.IDLE);
   showSolveConfirm = signal<boolean>(false);
 
