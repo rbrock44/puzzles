@@ -1,0 +1,10 @@
+<div class="mini-board" role="img" aria-label="Rack 'em Up board">
+  @for (cell of grid; track $index) {
+  <span class="mini-cell" [class.filler]="cell.filler">
+    @if (!cell.filler) {
+    <span class="mini-ball" [class.blank]="cell.color === null" [class]="cell.color !== null ? 'color-' + cell.color : ''"></span>
+    }
+  </span>
+  }
+</div>
+<app-rack-em-up-logo class="mini-wordmark" [compact]="compact"></app-rack-em-up-logo>

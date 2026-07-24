@@ -1,0 +1,79 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// Mirrors .board-grid's VISUAL_ROWS x COLS footprint in rack-em-up.scss:
+// the edge columns get one extra row above and below the 4 game rows,
+// since they're the ones that can shift. Both columns sit centred here
+// (see rack-em-up-mini-logo.ts), so there's nothing to offset - just the
+// static picture of that extra room, plus a filler block wherever the
+// middle columns don't reach.
+.mini-board {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 4px;
+  padding: 6px;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-sm);
+}
+
+.mini-cell {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// A middle-column corner: never holds a ball. Hatched like the real
+// board's .cell-slot.wall, reading as blocked rather than an open slot.
+.mini-cell.filler {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--paper-line),
+    var(--paper-line) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  border-radius: 3px;
+}
+
+.mini-ball {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.5),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(28, 42, 74, 0.15);
+}
+
+// Also doubles as the edge columns' extra top/bottom slot: an open,
+// available space rather than a wall, since it isn't actually blocked,
+// just unshifted.
+.mini-ball.blank {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--paper-line);
+}
+
+.color-0 {
+  background: radial-gradient(circle at 35% 30%, #7bd88f 0%, #2f9e4c 55%, #1f7a38 100%);
+}
+
+.color-1 {
+  background: radial-gradient(circle at 35% 30%, #7fb4f5 0%, #3d7ee0 55%, #275fb8 100%);
+}
+
+.color-2 {
+  background: radial-gradient(circle at 35% 30%, #f6e28a 0%, #e7c23e 55%, #c29a1e 100%);
+}
+
+.color-3 {
+  background: radial-gradient(circle at 35% 30%, #f08b7d 0%, #d64545 55%, #ad2c2c 100%);
+}

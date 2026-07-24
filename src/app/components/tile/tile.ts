@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Tile } from '../../objects/tile';
 import { SettingsService } from '../../services/settings';
-import { RackEmUpLogoComponent } from '../classic-puzzles/rack-em-up/rack-em-up-logo/rack-em-up-logo';
+import { RackEmUpMiniLogoComponent } from '../classic-puzzles/rack-em-up/rack-em-up-mini-logo/rack-em-up-mini-logo';
 import { TopSpinLogoComponent } from '../classic-puzzles/top-spin/top-spin-logo/top-spin-logo';
 
 @Component({
@@ -10,7 +10,7 @@ import { TopSpinLogoComponent } from '../classic-puzzles/top-spin/top-spin-logo/
   standalone: true,
   imports: [
     CommonModule,
-    RackEmUpLogoComponent,
+    RackEmUpMiniLogoComponent,
     TopSpinLogoComponent
   ],
   templateUrl: './tile.html',
