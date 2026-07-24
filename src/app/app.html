@@ -2,6 +2,8 @@
 <app-header></app-header>
 
 @if (this.settingsService.getSelectedTile() !== null) {
+  <app-back-button></app-back-button>
+
   @if (this.settingsService.getSelectedTile() === "sliding-puzzle" || this.settingsService.getSelectedTile() === "sp") {
     <app-sliding-puzzle></app-sliding-puzzle>
   }

@@ -1,0 +1,59 @@
+.back-bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem 0;
+    box-sizing: border-box;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem 0.5rem 0.8rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--paper-line);
+    background: var(--paper-raised);
+    color: var(--ink-soft);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.back-btn:hover {
+    border-color: var(--amber);
+    color: var(--ink);
+    box-shadow: var(--shadow-md);
+}
+
+.back-btn:hover .back-icon {
+    transform: translateX(-2px);
+}
+
+.back-btn:active {
+    transform: scale(0.96);
+}
+
+.back-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.back-label {
+    line-height: 1;
+}
+
+@media (max-width: 480px) {
+    .back-bar {
+        padding: 0.75rem 1.25rem 0;
+    }
+
+    .back-btn {
+        padding: 0.55rem 1.1rem 0.55rem 0.85rem;
+        font-size: 0.95rem;
+    }
+}
