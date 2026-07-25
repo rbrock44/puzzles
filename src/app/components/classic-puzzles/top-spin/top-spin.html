@@ -47,18 +47,29 @@
   <button type="button" class="new-game-btn" (click)="toggleView()">Back to game</button>
   } @else {
   <div class="meta-row">
-    <button type="button" class="new-game-btn" (click)="newGame()" [disabled]="isSpinning() || isDragging()">
-      New game
-    </button>
+    <div class="game-actions">
+      <button type="button" class="new-game-btn" (click)="newGame()"
+        [disabled]="isSpinning() || isDragging() || solverState() === SOLVER_STATE.COMPUTING || solverState() === SOLVER_STATE.SOLVING">
+        New game
+      </button>
+      <button type="button" class="solve-btn" (click)="autoSolve()" [disabled]="isLocked() || isSolved()"
+        aria-label="Automatically solve the puzzle">
+        @if (solverState() === SOLVER_STATE.COMPUTING || solverState() === SOLVER_STATE.SOLVING) {
+        Solving&hellip;
+        } @else {
+        Auto-Solve
+        }
+      </button>
+    </div>
 
     <div class="meta-actions">
-      <button type="button" class="rotate-btn rotate-left" (click)="rotate(SIDE.LEFT)" [disabled]="isSpinning() || isDragging()" aria-label="Rotate ring left">
+      <button type="button" class="rotate-btn rotate-left" (click)="rotate(SIDE.LEFT)" [disabled]="isSpinning() || isDragging() || isLocked()" aria-label="Rotate ring left">
         &#8592; Rotate
       </button>
-      <button type="button" class="spin-btn" (click)="spin()" [disabled]="isSpinning() || isDragging()" aria-label="Spin the turntable">
+      <button type="button" class="spin-btn" (click)="spin()" [disabled]="isSpinning() || isDragging() || isLocked()" aria-label="Spin the turntable">
         &#128260; Spin
       </button>
-      <button type="button" class="rotate-btn rotate-right" (click)="rotate(SIDE.RIGHT)" [disabled]="isSpinning() || isDragging()" aria-label="Rotate ring right">
+      <button type="button" class="rotate-btn rotate-right" (click)="rotate(SIDE.RIGHT)" [disabled]="isSpinning() || isDragging() || isLocked()" aria-label="Rotate ring right">
         Rotate &#8594;
       </button>
     </div>
@@ -70,13 +81,34 @@
   <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves &mdash; {{ solvedMode() }}!</p>
   }
 
+  @if (showSolveConfirm()) {
+  <div class="confirm-backdrop" (click)="cancelAutoSolve()">
+    <div class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirm-solve-title"
+      aria-describedby="confirm-solve-desc" (click)="$event.stopPropagation()">
+      <h2 id="confirm-solve-title">Auto-solve this puzzle?</h2>
+      <p id="confirm-solve-desc">
+        This can&#39;t be undone. Once it starts, you&#39;ll lose control of the ring
+        until it finishes solving.
+      </p>
+      <div class="confirm-actions">
+        <button type="button" class="confirm-cancel-btn" (click)="cancelAutoSolve()">
+          Cancel
+        </button>
+        <button type="button" class="confirm-ok-btn" (click)="confirmAutoSolve()">
+          Auto-Solve
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+
   <div class="board-wrap">
     <div class="board-track" aria-hidden="true"></div>
     <div class="board-ring" [class.solved]="isSolved()" [class.dragging]="isDragging()" #boardRing>
-      <div class="turntable" [class.disabled]="isSpinning()" [style.width.px]="turntableDiameterPx"
+      <div class="turntable" [class.disabled]="isSpinning() || isLocked()" [style.width.px]="turntableDiameterPx"
         [style.height.px]="turntableDiameterPx" [style.transform]="turntableTransform()" role="button" tabindex="0"
-        [attr.aria-disabled]="isSpinning()" aria-label="Spin the turntable" (click)="spin()"
-        (keydown.enter)="spin()" (keydown.space)="spin()">
+        [attr.aria-disabled]="isSpinning() || isLocked()" aria-label="Spin the turntable" (click)="onTurntableActivate()"
+        (keydown.enter)="onTurntableActivate()" (keydown.space)="onTurntableActivate()">
         <div class="turntable-face">
           <span class="turntable-dot"></span>
         </div>

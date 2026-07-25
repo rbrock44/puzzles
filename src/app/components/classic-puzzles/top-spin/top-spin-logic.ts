@@ -5,6 +5,8 @@ export const TRACK_LENGTH = 20;
 export const TURNTABLE_SIZE = 4;
 export const TURNTABLE_START = 0;
 
+export const AUTO_SOLVE_MOVE_DELAY_MS = 450;
+
 export type Cell = number;
 export interface TrackPoint {
   x: number;
