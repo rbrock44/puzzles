@@ -28,12 +28,6 @@
   -webkit-text-stroke: 1.5px #141b2e;
   paint-order: stroke fill;
   text-shadow: 1px 1.5px 0 #141b2e;
-  // The parent .tile rotates on hover; without its own layer, the bars'
-  // border-box edges and the S's font glyph can get rasterized with
-  // slightly different subpixel snapping at that fractional angle, which
-  // reads as the bars stepping a pixel or two away from the S. Forcing this
-  // whole wordmark onto one composited layer makes it rotate as a single
-  // rasterized unit instead, so bars and S move together exactly.
   transform: translateZ(0);
 }
 
@@ -77,9 +71,6 @@
   border-right: none;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  // A few px of deliberate slack past the border's own 1.5px, so a pixel or
-  // two of subpixel drift under the hover rotation (see .logo-title) still
-  // lands inside the S's fill instead of opening a visible gap.
   margin-right: -3px;
 }
 
@@ -117,10 +108,6 @@
   overflow: hidden;
   background: var(--spin-purple);
   border: 1px solid var(--spin-purple-deep);
-  // A grey trim reading as the track's own padding around the disc: solid
-  // everywhere, but only visible where the disc actually pokes clear of
-  // .mini-track (its top half) - past the track's edge it just blends into
-  // the track's own colour underneath.
   box-shadow:
     0 0 0 3px var(--spin-frame),
     0 0 0 4px var(--spin-frame),
@@ -128,9 +115,6 @@
     inset 0 1px 2px var(--spin-frame);
 }
 
-// Mirrors the real board's turntable-face/turntable-dot: the dot sits near
-// the top pole and the ridged lines are on the bottom, same as the full
-// board's disc at rest.
 .mini-turntable-face {
   position: absolute;
   left: 0;
@@ -151,9 +135,6 @@
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-// Mirrors the real board's turntable-grip: a circle concentric with the
-// whole disc, clipped by this half's overflow: hidden so only the arc
-// facing the disc's centre shows through as a set of ridged lines.
 .mini-turntable-grip {
   position: absolute;
   left: 0;
@@ -181,10 +162,6 @@
   );
 }
 
-// The darker window band the pieces pass through, matching the real
-// board's .turntable-track: full width so it reads as running edge to edge
-// under the disc's light purple face, clipped to the circle by the
-// turntable's own overflow: hidden.
 .mini-turntable-track {
   position: absolute;
   left: 0;
@@ -203,8 +180,6 @@
   justify-content: center;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 28%, #fde385 0%, #f6c94a 55%, #d9a316 100%);
-  border: 1px solid var(--spin-yellow-deep);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 1px 1px rgba(0, 0, 0, 0.2);
   font-family: var(--font-body);
   font-weight: 800;
   line-height: 1;
