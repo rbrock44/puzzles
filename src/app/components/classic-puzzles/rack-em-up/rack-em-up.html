@@ -84,7 +84,7 @@
   @if (isSolved()) {
   <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
   @if (wasAutoSolved()) {
-  <p class="score-ineligible">Auto-solved &mdash; not eligible for high scores</p>
+  <p class="score-ineligible">Auto-solved is not eligible for high scores</p>
   } @else {
   <app-save-score [saved]="scoreSaved()" (save)="saveScore($event)"></app-save-score>
   }
@@ -117,43 +117,53 @@
   </div>
 
   <div class="board-grid" [class.solved]="isSolved()">
-    <button type="button" class="tilt-btn tilt-left" (click)="tilt('left')" [disabled]="isLocked()"
+    <button type="button" class="tilt-btn tilt-left" (click)="tilt(SIDE.LEFT)" [disabled]="isLocked()"
       aria-label="Tilt board left">
       &#11013;
     </button>
-    <button type="button" class="tilt-btn tilt-right" (click)="tilt('right')" [disabled]="isLocked()"
+    <button type="button" class="tilt-btn tilt-right" (click)="tilt(SIDE.RIGHT)" [disabled]="isLocked()"
       aria-label="Tilt board right">
       &#10145;
     </button>
 
-    <button type="button" class="shift-btn shift-left-up" (click)="shiftColumn('left', 'up')"
-      [disabled]="isLocked() || !canShift('left', 'up')" aria-label="Shift left column up">
+    <button type="button" class="shift-btn shift-left-up" (click)="shiftColumn(SIDE.LEFT, DIRECTION.UP)"
+      [disabled]="isLocked() || !canShift(SIDE.LEFT, DIRECTION.UP)" aria-label="Shift left column up">
       &#9650;
     </button>
-    <button type="button" class="shift-btn shift-right-up" (click)="shiftColumn('right', 'up')"
-      [disabled]="isLocked() || !canShift('right', 'up')" aria-label="Shift right column up">
+    <button type="button" class="shift-btn shift-right-up" (click)="shiftColumn(SIDE.RIGHT, DIRECTION.UP)"
+      [disabled]="isLocked() || !canShift(SIDE.RIGHT, DIRECTION.UP)" aria-label="Shift right column up">
       &#9650;
     </button>
 
     @for (row of visualBoard(); track $index; let r = $index) {
       @for (cell of row; track $index; let c = $index) {
         @if (cell.kind !== 'cap') {
-          <div class="cell-slot" [class.wall]="cell.kind === 'wall'" [style.grid-column]="c + 2" [style.grid-row]="r + 2">
+          @if (cell.kind === 'wall') {
+          <div class="cell-slot wall" [style.grid-column]="c + 2" [style.grid-row]="r + 2" role="button" tabindex="0"
+            [attr.aria-disabled]="isLocked()"
+            [attr.aria-label]="'Shift ' + (c === 0 ? SIDE.LEFT : SIDE.RIGHT) + ' column toward this row'"
+            (click)="shiftToward(c === 0 ? SIDE.LEFT : SIDE.RIGHT, r)"
+            (keydown.enter)="shiftToward(c === 0 ? SIDE.LEFT : SIDE.RIGHT, r)"
+            (keydown.space)="$event.preventDefault(); shiftToward(c === 0 ? SIDE.LEFT : SIDE.RIGHT, r)">
+          </div>
+          } @else {
+          <div class="cell-slot" [style.grid-column]="c + 2" [style.grid-row]="r + 2">
             @if (cell.kind === 'ball' || cell.kind === 'blank') {
             <div class="ball" [class.blank]="cell.kind === 'blank'"
               [ngClass]="cell.kind === 'ball' ? 'color-' + cell.color : ''"></div>
             }
           </div>
+          }
         }
       }
     }
 
-    <button type="button" class="shift-btn shift-left-down" (click)="shiftColumn('left', 'down')"
-      [disabled]="isLocked() || !canShift('left', 'down')" aria-label="Shift left column down">
+    <button type="button" class="shift-btn shift-left-down" (click)="shiftColumn(SIDE.LEFT, 'down')"
+      [disabled]="isLocked() || !canShift(SIDE.LEFT, 'down')" aria-label="Shift left column down">
       &#9660;
     </button>
-    <button type="button" class="shift-btn shift-right-down" (click)="shiftColumn('right', 'down')"
-      [disabled]="isLocked() || !canShift('right', 'down')" aria-label="Shift right column down">
+    <button type="button" class="shift-btn shift-right-down" (click)="shiftColumn(SIDE.RIGHT, 'down')"
+      [disabled]="isLocked() || !canShift(SIDE.RIGHT, 'down')" aria-label="Shift right column down">
       &#9660;
     </button>
   </div>

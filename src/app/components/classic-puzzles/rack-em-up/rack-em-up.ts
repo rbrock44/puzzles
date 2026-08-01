@@ -73,9 +73,11 @@ const INFO_COLUMNS: InfoColumn[] = [
 export class RackEmUpComponent implements OnDestroy {
   private autoSolveTimer: ReturnType<typeof setTimeout> | null = null;
 
+  readonly DIRECTION = DIRECTION
   readonly GAME_VIEW = GAME_VIEW;
-  readonly SOLVER_STATE = SOLVER_STATE;
   readonly INFO_COLUMNS = INFO_COLUMNS;
+  readonly SIDE = SIDE;
+  readonly SOLVER_STATE = SOLVER_STATE;
   readonly TILE_PARAM = TILE_PARAM;
   readonly categoryName: string;
 
@@ -159,6 +161,32 @@ export class RackEmUpComponent implements OnDestroy {
   canShift(side: Side, direction: Direction): boolean {
     const plng = side === SIDE.LEFT ? this.plngl() : this.plngr();
     return canShiftState(plng, direction);
+  }
+
+  shiftToward(side: Side, visualRow: number): void {
+    if (this.isLocked()) {
+      return;
+    }
+
+    const plng = side === SIDE.LEFT ? this.plngl() : this.plngr();
+    const dataRow = visualRow - plng - 1;
+
+    let target: number;
+    if (dataRow < 0) {
+      target = visualRow - 1;
+    } else if (dataRow >= ROWS) {
+      target = visualRow - ROWS;
+    } else {
+      return;
+    }
+
+    const steps = Math.abs(target - plng);
+    if (side === SIDE.LEFT) {
+      this.plngl.set(target);
+    } else {
+      this.plngr.set(target);
+    }
+    this.moves.update(count => count + steps);
   }
 
   toggleView(): void {

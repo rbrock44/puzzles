@@ -440,6 +440,19 @@ h1 {
     transparent 8px
   );
   border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.cell-slot.wall:hover,
+.cell-slot.wall:focus-visible {
+  background-color: color-mix(in srgb, var(--amber) 18%, transparent);
+  outline: none;
+}
+
+.cell-slot.wall[aria-disabled='true'] {
+  cursor: default;
+  background-color: transparent;
 }
 
 .ball {
