@@ -1,4 +1,4 @@
-<section class="widget-container" [class.wide]="view() !== GAME_VIEW.PLAY">
+<section class="widget-container" [class.wide]="view() === GAME_VIEW.INFO" [class.scores-wide]="view() === GAME_VIEW.SCORES">
   <div class="view-header">
     <div>
       <p class="eyebrow">{{ categoryName }}</p>
@@ -23,11 +23,7 @@
   </div>
 
 @if (view() === GAME_VIEW.SCORES) {
-  <div class="info-panel">
-    <h2>High Scores</h2>
-    <app-high-scores [puzzle]="TILE_PARAM"></app-high-scores>
-    <button type="button" class="new-game-btn" (click)="toggleScores()">Back to game</button>
-  </div>
+  <app-high-scores-panel [puzzle]="TILE_PARAM" (back)="toggleScores()"></app-high-scores-panel>
 } @else if (view() === GAME_VIEW.INFO) {
   <div class="info-panel">
     <div class="brand-cap brand-cap-header" aria-hidden="true">

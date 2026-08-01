@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SettingsService } from '../../../services/settings';
 import { GameStateService } from '../../../services/game-state';
 import { HighScoreService } from '../../../services/high-score';
-import { HighScoresComponent } from '../../high-scores/high-scores';
+import { HighScoresPanelComponent } from '../../high-scores-panel/high-scores-panel';
 import { SaveScoreComponent } from '../../save-score/save-score';
 
 const SIZE = 4;
@@ -19,7 +19,11 @@ interface SlidingPuzzleSaveState {
 @Component({
   selector: 'app-sliding-puzzle',
   standalone: true,
-  imports: [CommonModule, HighScoresComponent, SaveScoreComponent],
+  imports: [
+    CommonModule, 
+    HighScoresPanelComponent, 
+    SaveScoreComponent
+  ],
   templateUrl: './sliding-puzzle.html',
   styleUrl: './sliding-puzzle.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

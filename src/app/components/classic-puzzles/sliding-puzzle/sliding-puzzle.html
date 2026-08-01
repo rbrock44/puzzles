@@ -18,10 +18,7 @@
   </div>
 
   @if (showScores()) {
-    <div class="info-panel">
-      <h2>High Scores</h2>
-      <app-high-scores [puzzle]="TILE_PARAM"></app-high-scores>
-    </div>
+    <app-high-scores-panel [puzzle]="TILE_PARAM" (back)="showScores.set(false)"></app-high-scores-panel>
   } @else {
     @if (isSolved()) {
       <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>

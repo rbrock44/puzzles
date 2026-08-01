@@ -22,7 +22,7 @@ import { SolverMove, solveTopSpin } from './top-spin-solver';
 import { SettingsService } from '../../../services/settings';
 import { GameStateService } from '../../../services/game-state';
 import { HighScoreService } from '../../../services/high-score';
-import { HighScoresComponent } from '../../high-scores/high-scores';
+import { HighScoresPanelComponent } from '../../high-scores-panel/high-scores-panel';
 import { SaveScoreComponent } from '../../save-score/save-score';
 
 const TILE_PARAM = 'top-spin';
@@ -70,8 +70,8 @@ const INFO_COLUMNS: InfoColumn[] = [
   selector: 'app-top-spin',
   standalone: true,
   imports: [
-    CommonModule, 
-    HighScoresComponent, 
+    CommonModule,
+    HighScoresPanelComponent,
     SaveScoreComponent
   ],
   templateUrl: './top-spin.html',

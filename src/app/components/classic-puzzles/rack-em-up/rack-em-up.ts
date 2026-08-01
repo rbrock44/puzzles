@@ -21,7 +21,7 @@ import { RackEmUpLogoComponent } from './rack-em-up-logo/rack-em-up-logo';
 import { SettingsService } from '../../../services/settings';
 import { GameStateService } from '../../../services/game-state';
 import { HighScoreService } from '../../../services/high-score';
-import { HighScoresComponent } from '../../high-scores/high-scores';
+import { HighScoresPanelComponent } from '../../high-scores-panel/high-scores-panel';
 import { SaveScoreComponent } from '../../save-score/save-score';
 
 const TILE_PARAM = 'rack-em-up';
@@ -61,9 +61,9 @@ const INFO_COLUMNS: InfoColumn[] = [
   selector: 'app-rack-em-up',
   standalone: true,
   imports: [
-    CommonModule, 
-    HighScoresComponent, 
-    RackEmUpLogoComponent, 
+    CommonModule,
+    HighScoresPanelComponent,
+    RackEmUpLogoComponent,
     SaveScoreComponent
   ],
   templateUrl: './rack-em-up.html',

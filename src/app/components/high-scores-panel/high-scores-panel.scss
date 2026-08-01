@@ -1,0 +1,33 @@
+.info-panel {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--paper-line);
+}
+
+.info-panel h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.new-game-btn {
+  display: block;
+  margin: 1.25rem auto 0;
+  background: var(--amber);
+  color: var(--amber-ink);
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.new-game-btn:hover {
+  background: var(--amber-deep);
+  color: #fff;
+}
+
+.new-game-btn:active {
+  transform: scale(0.97);
+}
