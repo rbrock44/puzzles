@@ -20,6 +20,9 @@ import { DIRECTION, Direction, GAME_VIEW, GameView, Side, SIDE, SOLVER_STATE, So
 import { RackEmUpLogoComponent } from './rack-em-up-logo/rack-em-up-logo';
 import { SettingsService } from '../../../services/settings';
 import { GameStateService } from '../../../services/game-state';
+import { HighScoreService } from '../../../services/high-score';
+import { HighScoresComponent } from '../../high-scores/high-scores';
+import { SaveScoreComponent } from '../../save-score/save-score';
 
 const TILE_PARAM = 'rack-em-up';
 
@@ -28,6 +31,7 @@ interface RackEmUpSaveState {
   plngl: number;
   plngr: number;
   moves: number;
+  gameId: string;
 }
 
 type VisualKind = 'ball' | 'blank' | 'wall' | 'cap';
@@ -56,7 +60,12 @@ const INFO_COLUMNS: InfoColumn[] = [
 @Component({
   selector: 'app-rack-em-up',
   standalone: true,
-  imports: [CommonModule, RackEmUpLogoComponent],
+  imports: [
+    CommonModule, 
+    HighScoresComponent, 
+    RackEmUpLogoComponent, 
+    SaveScoreComponent
+  ],
   templateUrl: './rack-em-up.html',
   styleUrl: './rack-em-up.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -67,10 +76,12 @@ export class RackEmUpComponent implements OnDestroy {
   readonly GAME_VIEW = GAME_VIEW;
   readonly SOLVER_STATE = SOLVER_STATE;
   readonly INFO_COLUMNS = INFO_COLUMNS;
+  readonly TILE_PARAM = TILE_PARAM;
   readonly categoryName: string;
 
   private settingsService = inject(SettingsService);
   private gameState = inject(GameStateService);
+  private highScoreService = inject(HighScoreService);
   private storageKey = this.settingsService.getStorageKey(TILE_PARAM);
   private saved = this.gameState.load<RackEmUpSaveState>(this.storageKey);
   private initial = this.saved ?? this.generateScrambled();
@@ -84,6 +95,16 @@ export class RackEmUpComponent implements OnDestroy {
         plngl: this.plngl(),
         plngr: this.plngr(),
         moves: this.moves(),
+        gameId: this.gameId(),
+      });
+    });
+
+    effect(() => {
+      const gameId = this.gameId();
+      this.highScoreService.hasScoreForGame(TILE_PARAM, gameId).then(saved => {
+        if (this.gameId() === gameId) {
+          this.scoreSaved.set(saved);
+        }
       });
     });
   }
@@ -93,10 +114,13 @@ export class RackEmUpComponent implements OnDestroy {
   plngl = signal<number>(this.initial.plngl);
   plngr = signal<number>(this.initial.plngr);
   moves = signal<number>(this.saved?.moves ?? 0);
+  gameId = signal<string>(this.saved?.gameId ?? crypto.randomUUID());
   solverState = signal<SolverState>(SOLVER_STATE.IDLE);
   showSolveConfirm = signal<boolean>(false);
+  scoreSaved = signal<boolean>(false);
 
   isLocked = computed<boolean>(() => this.solverState() !== SOLVER_STATE.IDLE);
+  wasAutoSolved = computed<boolean>(() => this.solverState() === SOLVER_STATE.DONE);
 
   visualBoard = computed<VisualCell[][]>(() => {
     const cells = this.cells();
@@ -139,6 +163,19 @@ export class RackEmUpComponent implements OnDestroy {
 
   toggleView(): void {
     this.view.set(this.view() === GAME_VIEW.PLAY ? GAME_VIEW.INFO : GAME_VIEW.PLAY);
+  }
+
+  toggleScores(): void {
+    this.view.set(this.view() === GAME_VIEW.SCORES ? GAME_VIEW.PLAY : GAME_VIEW.SCORES);
+  }
+
+  async saveScore(initials: string): Promise<void> {
+    if (this.scoreSaved() || this.wasAutoSolved() || !this.isSolved()) {
+      return;
+    }
+
+    await this.highScoreService.submitScore(TILE_PARAM, this.moves(), 'Solved', initials, this.gameId());
+    this.scoreSaved.set(true);
   }
 
   tilt(direction: Side): void {
@@ -186,6 +223,7 @@ export class RackEmUpComponent implements OnDestroy {
     this.plngl.set(state.plngl);
     this.plngr.set(state.plngr);
     this.moves.set(0);
+    this.gameId.set(crypto.randomUUID());
   }
 
   autoSolve(): void {

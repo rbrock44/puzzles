@@ -49,6 +49,13 @@ h1 {
   font-size: 0.92rem;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 .info-btn {
   flex-shrink: 0;
   background: var(--paper);
@@ -343,6 +350,20 @@ h1 {
   font-weight: 700;
   text-align: center;
   animation: pop-in 0.3s ease;
+}
+
+.score-ineligible {
+  margin: 0.6rem 0 0;
+  color: var(--coral);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.confirm-dialog p.confirm-warning {
+  margin-top: 0.75rem;
+  color: var(--coral);
+  font-weight: 600;
 }
 
 @keyframes pop-in {

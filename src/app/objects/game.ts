@@ -1,6 +1,7 @@
 export const GAME_VIEW = {
   INFO: 'info',
   PLAY: 'play',
+  SCORES: 'scores',
 } as const;
 
 export type GameView = (typeof GAME_VIEW)[keyof typeof GAME_VIEW];

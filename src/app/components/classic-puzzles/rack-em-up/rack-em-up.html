@@ -1,19 +1,34 @@
-<section class="widget-container" [class.wide]="view() === GAME_VIEW.INFO">
+<section class="widget-container" [class.wide]="view() !== GAME_VIEW.PLAY">
   <div class="view-header">
     <div>
       <p class="eyebrow">{{ categoryName }}</p>
       <h1>Rack &#39;em Up</h1>
     </div>
-    <button type="button" class="info-btn" (click)="toggleView()" [attr.aria-pressed]="view() === GAME_VIEW.INFO">
-      @if (view() === GAME_VIEW.INFO) {
-      Back
-      } @else {
-      Info
-      }
-    </button>
+    <div class="header-actions">
+      <button type="button" class="info-btn" (click)="toggleScores()" [attr.aria-pressed]="view() === GAME_VIEW.SCORES">
+        @if (view() === GAME_VIEW.SCORES) {
+        Back
+        } @else {
+        High Scores
+        }
+      </button>
+      <button type="button" class="info-btn" (click)="toggleView()" [attr.aria-pressed]="view() === GAME_VIEW.INFO">
+        @if (view() === GAME_VIEW.INFO) {
+        Back
+        } @else {
+        Info
+        }
+      </button>
+    </div>
   </div>
 
-@if (view() === GAME_VIEW.INFO) {
+@if (view() === GAME_VIEW.SCORES) {
+  <div class="info-panel">
+    <h2>High Scores</h2>
+    <app-high-scores [puzzle]="TILE_PARAM"></app-high-scores>
+    <button type="button" class="new-game-btn" (click)="toggleScores()">Back to game</button>
+  </div>
+} @else if (view() === GAME_VIEW.INFO) {
   <div class="info-panel">
     <div class="brand-cap brand-cap-header" aria-hidden="true">
         <app-rack-em-up-logo class="brand-cap-content"></app-rack-em-up-logo>
@@ -72,6 +87,11 @@
 
   @if (isSolved()) {
   <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
+  @if (wasAutoSolved()) {
+  <p class="score-ineligible">Auto-solved &mdash; not eligible for high scores</p>
+  } @else {
+  <app-save-score [saved]="scoreSaved()" (save)="saveScore($event)"></app-save-score>
+  }
   }
 
   @if (showSolveConfirm()) {
@@ -83,6 +103,7 @@
         This can&#39;t be undone. Once it starts, you&#39;ll lose control of the board
         until it finishes solving.
       </p>
+      <p class="confirm-warning">&#9888; Auto-solving will disqualify this game from high scores.</p>
       <div class="confirm-actions">
         <button type="button" class="confirm-cancel-btn" (click)="cancelAutoSolve()">
           Cancel

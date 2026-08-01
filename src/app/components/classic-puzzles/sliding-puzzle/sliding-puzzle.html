@@ -5,26 +5,43 @@
 
   <div class="meta-row">
     <span class="moves">Moves <strong>{{ moves() }}</strong></span>
-    <button type="button" class="new-game-btn" (click)="newGame()">New game</button>
-  </div>
-
-  @if (isSolved()) {
-    <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
-  }
-
-  <div class="board" [class.solved]="isSolved()">
-    @for (value of board(); track $index) {
-      <button
-        type="button"
-        class="cell"
-        [class.blank]="value === 0"
-        [disabled]="value === 0"
-        (click)="handleTileClick($index)"
-      >
-        @if (value !== 0) {
-          {{ value }}
+    <div class="meta-actions">
+      <button type="button" class="info-btn" (click)="showScores.set(!showScores())" [attr.aria-pressed]="showScores()">
+        @if (showScores()) {
+        Back
+        } @else {
+        High Scores
         }
       </button>
-    }
+      <button type="button" class="new-game-btn" (click)="newGame()">New game</button>
+    </div>
   </div>
+
+  @if (showScores()) {
+    <div class="info-panel">
+      <h2>High Scores</h2>
+      <app-high-scores [puzzle]="TILE_PARAM"></app-high-scores>
+    </div>
+  } @else {
+    @if (isSolved()) {
+      <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves</p>
+      <app-save-score [saved]="scoreSaved()" (save)="saveScore($event)"></app-save-score>
+    }
+
+    <div class="board" [class.solved]="isSolved()">
+      @for (value of board(); track $index) {
+        <button
+          type="button"
+          class="cell"
+          [class.blank]="value === 0"
+          [disabled]="value === 0"
+          (click)="handleTileClick($index)"
+        >
+          @if (value !== 0) {
+            {{ value }}
+          }
+        </button>
+      }
+    </div>
+  }
 </section>

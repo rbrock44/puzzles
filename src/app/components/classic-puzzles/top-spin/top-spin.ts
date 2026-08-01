@@ -21,6 +21,9 @@ import {
 import { SolverMove, solveTopSpin } from './top-spin-solver';
 import { SettingsService } from '../../../services/settings';
 import { GameStateService } from '../../../services/game-state';
+import { HighScoreService } from '../../../services/high-score';
+import { HighScoresComponent } from '../../high-scores/high-scores';
+import { SaveScoreComponent } from '../../save-score/save-score';
 
 const TILE_PARAM = 'top-spin';
 
@@ -29,6 +32,7 @@ interface TopSpinSaveState {
   moves: number;
   turntableSpinCount: number;
   pieceHalfTurns: [Cell, number][];
+  gameId: string;
 }
 
 // Names for the four self-imposed modes described in the info panel: a
@@ -65,7 +69,11 @@ const INFO_COLUMNS: InfoColumn[] = [
 @Component({
   selector: 'app-top-spin',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule, 
+    HighScoresComponent, 
+    SaveScoreComponent
+  ],
   templateUrl: './top-spin.html',
   styleUrl: './top-spin.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -77,10 +85,12 @@ export class TopSpinComponent implements OnDestroy {
   readonly SOLVER_STATE = SOLVER_STATE;
   readonly INFO_COLUMNS = INFO_COLUMNS;
   readonly SIDE = SIDE;
+  readonly TILE_PARAM = TILE_PARAM;
   readonly categoryName: string;
 
   private settingsService = inject(SettingsService);
   private gameState = inject(GameStateService);
+  private highScoreService = inject(HighScoreService);
   private storageKey = this.settingsService.getStorageKey(TILE_PARAM);
   private saved = this.gameState.load<TopSpinSaveState>(this.storageKey);
 
@@ -93,6 +103,16 @@ export class TopSpinComponent implements OnDestroy {
         moves: this.moves(),
         turntableSpinCount: this.turntableSpinCount(),
         pieceHalfTurns: [...this.pieceHalfTurns()],
+        gameId: this.gameId(),
+      });
+    });
+
+    effect(() => {
+      const gameId = this.gameId();
+      this.highScoreService.hasScoreForGame(TILE_PARAM, gameId).then(saved => {
+        if (this.gameId() === gameId) {
+          this.scoreSaved.set(saved);
+        }
       });
     });
   }
@@ -100,10 +120,13 @@ export class TopSpinComponent implements OnDestroy {
   view = signal<GameView>(GAME_VIEW.PLAY);
   cells = signal<Cell[]>(this.saved?.cells ?? this.generateScrambled());
   moves = signal<number>(this.saved?.moves ?? 0);
+  gameId = signal<string>(this.saved?.gameId ?? crypto.randomUUID());
   solverState = signal<SolverState>(SOLVER_STATE.IDLE);
   showSolveConfirm = signal<boolean>(false);
+  scoreSaved = signal<boolean>(false);
 
   isLocked = computed<boolean>(() => this.solverState() !== SOLVER_STATE.IDLE);
+  wasAutoSolved = computed<boolean>(() => this.solverState() === SOLVER_STATE.DONE);
 
   private solveDirection = computed(() => solvedDirection(this.cells()));
   isSolved = computed<boolean>(() => this.solveDirection() !== null);
@@ -175,6 +198,20 @@ export class TopSpinComponent implements OnDestroy {
 
   toggleView(): void {
     this.view.set(this.view() === GAME_VIEW.PLAY ? GAME_VIEW.INFO : GAME_VIEW.PLAY);
+  }
+
+  toggleScores(): void {
+    this.view.set(this.view() === GAME_VIEW.SCORES ? GAME_VIEW.PLAY : GAME_VIEW.SCORES);
+  }
+
+  async saveScore(initials: string): Promise<void> {
+    const winType = this.solvedMode();
+    if (this.scoreSaved() || this.wasAutoSolved() || !winType) {
+      return;
+    }
+
+    await this.highScoreService.submitScore(TILE_PARAM, this.moves(), winType, initials, this.gameId());
+    this.scoreSaved.set(true);
   }
 
   rotate(direction: Side): void {
@@ -284,6 +321,7 @@ export class TopSpinComponent implements OnDestroy {
     this.cells.set(this.generateScrambled());
     this.pieceHalfTurns.set(new Map());
     this.moves.set(0);
+    this.gameId.set(crypto.randomUUID());
   }
 
   autoSolve(): void {

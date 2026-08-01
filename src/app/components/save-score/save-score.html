@@ -1,0 +1,22 @@
+@if (saved()) {
+  <p class="score-saved">Score saved!</p>
+} @else {
+  <div class="save-score-form">
+    <label class="sr-only" for="initials-input">Enter your 3 initials</label>
+    <input
+      id="initials-input"
+      class="initials-input"
+      type="text"
+      maxlength="3"
+      placeholder="AAA"
+      autocomplete="off"
+      spellcheck="false"
+      [value]="initials()"
+      (input)="onInput($any($event.target).value)"
+      (keydown.enter)="submit()"
+    />
+    <button type="button" class="save-score-btn" [disabled]="!isValid()" (click)="submit()">
+      Save Score
+    </button>
+  </div>
+}

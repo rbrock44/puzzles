@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { CommonModule } from '@angular/common';
 import { SettingsService } from '../../../services/settings';
 import { GameStateService } from '../../../services/game-state';
+import { HighScoreService } from '../../../services/high-score';
+import { HighScoresComponent } from '../../high-scores/high-scores';
+import { SaveScoreComponent } from '../../save-score/save-score';
 
 const SIZE = 4;
 const BLANK = 0;
@@ -10,21 +13,24 @@ const TILE_PARAM = 'sliding-puzzle';
 interface SlidingPuzzleSaveState {
   board: number[];
   moves: number;
+  gameId: string;
 }
 
 @Component({
   selector: 'app-sliding-puzzle',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HighScoresComponent, SaveScoreComponent],
   templateUrl: './sliding-puzzle.html',
   styleUrl: './sliding-puzzle.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SlidingPuzzleComponent {
+  readonly TILE_PARAM = TILE_PARAM;
   readonly categoryName: string;
 
   private settingsService = inject(SettingsService);
   private gameState = inject(GameStateService);
+  private highScoreService = inject(HighScoreService);
   private storageKey = this.settingsService.getStorageKey(TILE_PARAM);
   private saved = this.gameState.load<SlidingPuzzleSaveState>(this.storageKey);
 
@@ -35,12 +41,25 @@ export class SlidingPuzzleComponent {
       this.gameState.save<SlidingPuzzleSaveState>(this.storageKey, {
         board: this.board(),
         moves: this.moves(),
+        gameId: this.gameId(),
+      });
+    });
+
+    effect(() => {
+      const gameId = this.gameId();
+      this.highScoreService.hasScoreForGame(TILE_PARAM, gameId).then(saved => {
+        if (this.gameId() === gameId) {
+          this.scoreSaved.set(saved);
+        }
       });
     });
   }
 
   board = signal<number[]>(this.saved?.board ?? this.shuffled());
   moves = signal<number>(this.saved?.moves ?? 0);
+  gameId = signal<string>(this.saved?.gameId ?? crypto.randomUUID());
+  showScores = signal<boolean>(false);
+  scoreSaved = signal<boolean>(false);
 
   isSolved = computed<boolean>(() => {
     const tiles = this.board();
@@ -71,6 +90,16 @@ export class SlidingPuzzleComponent {
   newGame(): void {
     this.board.set(this.shuffled());
     this.moves.set(0);
+    this.gameId.set(crypto.randomUUID());
+  }
+
+  async saveScore(initials: string): Promise<void> {
+    if (this.scoreSaved() || !this.isSolved()) {
+      return;
+    }
+
+    await this.highScoreService.submitScore(TILE_PARAM, this.moves(), 'Solved', initials, this.gameId());
+    this.scoreSaved.set(true);
   }
 
   private isAdjacent(a: number, b: number): boolean {

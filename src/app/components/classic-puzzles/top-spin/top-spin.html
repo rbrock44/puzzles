@@ -1,20 +1,35 @@
-<section class="widget-container" [class.wide]="view() === GAME_VIEW.INFO">
+<section class="widget-container" [class.wide]="view() !== GAME_VIEW.PLAY">
   <div class="view-header">
     <div>
       <p class="eyebrow">{{ categoryName }}</p>
       <h1>Top Spin</h1>
       <p class="description">A Puzzle to Spin You in Circles!</p>
     </div>
-    <button type="button" class="info-btn" (click)="toggleView()" [attr.aria-pressed]="view() === GAME_VIEW.INFO">
-      @if (view() === GAME_VIEW.INFO) {
-      Back
-      } @else {
-      Info
-      }
-    </button>
+    <div class="header-actions">
+      <button type="button" class="info-btn" (click)="toggleScores()" [attr.aria-pressed]="view() === GAME_VIEW.SCORES">
+        @if (view() === GAME_VIEW.SCORES) {
+        Back
+        } @else {
+        High Scores
+        }
+      </button>
+      <button type="button" class="info-btn" (click)="toggleView()" [attr.aria-pressed]="view() === GAME_VIEW.INFO">
+        @if (view() === GAME_VIEW.INFO) {
+        Back
+        } @else {
+        Info
+        }
+      </button>
+    </div>
   </div>
 
-@if (view() === GAME_VIEW.INFO) {
+@if (view() === GAME_VIEW.SCORES) {
+  <div class="info-panel">
+    <h2>High Scores</h2>
+    <app-high-scores [puzzle]="TILE_PARAM"></app-high-scores>
+    <button type="button" class="new-game-btn" (click)="toggleScores()">Back to game</button>
+  </div>
+} @else if (view() === GAME_VIEW.INFO) {
   <div class="info-panel">
     <p class="description">
       Top Spin is a ring of 20 numbered pieces. A turntable sits fixed in the
@@ -79,6 +94,11 @@
 
   @if (isSolved()) {
   <p class="solved-banner" aria-live="polite">Solved in {{ moves() }} moves &mdash; {{ solvedMode() }}!</p>
+  @if (wasAutoSolved()) {
+  <p class="score-ineligible">Auto-solved &mdash; not eligible for high scores</p>
+  } @else {
+  <app-save-score [saved]="scoreSaved()" (save)="saveScore($event)"></app-save-score>
+  }
   }
 
   @if (showSolveConfirm()) {
@@ -90,6 +110,7 @@
         This can&#39;t be undone. Once it starts, you&#39;ll lose control of the ring
         until it finishes solving.
       </p>
+      <p class="confirm-warning">&#9888; Auto-solving will disqualify this game from high scores.</p>
       <div class="confirm-actions">
         <button type="button" class="confirm-cancel-btn" (click)="cancelAutoSolve()">
           Cancel

@@ -1,0 +1,19 @@
+<div class="high-scores">
+  @if (scores() === null) {
+    <p class="empty">Loading&hellip;</p>
+  } @else if (scores()!.length === 0) {
+    <p class="empty">No scores saved yet. Win a game and save your score!</p>
+  } @else {
+    <ol class="score-list">
+      @for (entry of scores(); track entry.id; let i = $index) {
+        <li class="score-row">
+          <span class="rank">{{ i + 1 }}</span>
+          <span class="score-initials">{{ entry.initials || '—' }}</span>
+          <span class="score-moves">{{ entry.moves }} <small>moves</small></span>
+          <span class="score-type">{{ entry.winType }}</span>
+          <span class="score-date">{{ entry.date | date:'MMM d, y, h:mm a' }}</span>
+        </li>
+      }
+    </ol>
+  }
+</div>
