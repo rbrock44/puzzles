@@ -16,7 +16,7 @@
 }
 
 .tile-top-spin {
-    min-width: 275px;
+    min-width: min(275px, 100%);
     max-width: 300px;
 }
 
