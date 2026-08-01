@@ -581,6 +581,12 @@ h1 {
     0 0 0 2px var(--spin-yellow-deep);
 }
 
+.board-logo {
+  display: flex;
+  justify-content: center;
+  margin-top: -2.2rem;
+}
+
 @media (max-width: 480px) {
   .widget-container {
     padding: 1.25rem;

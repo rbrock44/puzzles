@@ -1,3 +1,4 @@
+@if (!textLogoOnly) {
 <div class="mini-board" [style.width.px]="this.boardWidth" [style.height.px]="this.boardHeight" role="img"
   aria-label="Top Spin board">
   <div class="mini-track" [style.top.px]="this.trackTop" [style.height.px]="this.trackHeight"></div>
@@ -7,12 +8,13 @@
     <span class="mini-turntable-grip"></span>
     <span class="mini-turntable-track"></span>
   </div>
-  @for (token of this.tokens; track token.value) {
+  @for (token of tokens; track token.value) {
   <span class="mini-token" [class.in-turntable]="token.inTurntable" [style.width.px]="this.tokenDiameter"
     [style.height.px]="this.tokenDiameter" [style.left.px]="token.left" [style.top.px]="token.top"
     [style.font-size.px]="this.tokenDiameter * 0.48">{{ token.value }}</span>
   }
 </div>
+}
 <span class="logo-title" aria-label="Top Spin">
   <span class="logo-group logo-group--top">
     <span class="logo-word">top.&nbsp;</span>

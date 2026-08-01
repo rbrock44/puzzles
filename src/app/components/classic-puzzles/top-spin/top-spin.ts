@@ -25,6 +25,7 @@ import { GameStateService } from '../../../services/game-state';
 import { HighScoreService } from '../../../services/high-score';
 import { HighScoresPanelComponent } from '../../high-scores-panel/high-scores-panel';
 import { SaveScoreComponent } from '../../save-score/save-score';
+import { TopSpinLogoComponent } from './top-spin-logo/top-spin-logo';
 
 const TILE_PARAM = 'top-spin';
 
@@ -36,9 +37,6 @@ interface TopSpinSaveState {
   gameId: string;
 }
 
-// Names for the four self-imposed modes described in the info panel: a
-// number direction paired with which way the turntable's purple dot ends
-// up facing (see turntableTransform, angle 0 leaves the dot at the top).
 const MODE_NAMES = {
   ascending: { top: 'Unscramble', bottom: 'Unscramble Flip' },
   descending: { top: 'Reverse', bottom: 'Reverse Flip' },
@@ -73,7 +71,8 @@ const INFO_COLUMNS: InfoColumn[] = [
   imports: [
     CommonModule,
     HighScoresPanelComponent,
-    SaveScoreComponent
+    SaveScoreComponent,
+    TopSpinLogoComponent
   ],
   templateUrl: './top-spin.html',
   styleUrl: './top-spin.scss',
