@@ -7,6 +7,7 @@ import {
   CAP_RADIUS,
   Cell,
   TOKEN_DIAMETER,
+  TRACK_LENGTH,
   TURNTABLE_SIZE,
   TURNTABLE_START,
   closestT,
@@ -171,8 +172,12 @@ export class TopSpinComponent implements OnDestroy {
 
     return solvedCells().map(value => {
       const index = indexByValue.get(value) as number;
-      const { x, y } = slotPosition(index + dragOffset);
-      const inTurntable = index >= TURNTABLE_START && index < TURNTABLE_START + TURNTABLE_SIZE;
+      const draggedIndex = index + dragOffset;
+      const { x, y } = slotPosition(draggedIndex);
+      // inTurntable must track the token's *current* (dragged) position, not
+      // its resting index, otherwise it flings off to the wrong part of the board
+      const wrappedIndex = ((draggedIndex % TRACK_LENGTH) + TRACK_LENGTH) % TRACK_LENGTH;
+      const inTurntable = wrappedIndex >= TURNTABLE_START && wrappedIndex < TURNTABLE_START + TURNTABLE_SIZE;
       const tilt = ((value * 53) % 25) - 12;
       const flips = halfTurns.get(value) ?? 0;
       const flipRotation = flips * 180;
