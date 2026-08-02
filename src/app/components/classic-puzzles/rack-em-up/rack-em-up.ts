@@ -190,7 +190,7 @@ export class RackEmUpComponent implements OnDestroy {
   }
 
   toggleView(): void {
-    this.view.set(this.view() === GAME_VIEW.PLAY ? GAME_VIEW.INFO : GAME_VIEW.PLAY);
+    this.view.set(this.view() === GAME_VIEW.INFO ? GAME_VIEW.PLAY : GAME_VIEW.INFO);
   }
 
   toggleScores(): void {
