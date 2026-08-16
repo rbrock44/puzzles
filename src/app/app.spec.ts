@@ -33,12 +33,12 @@ describe('App', () => {
     expect(compiled.querySelector('.brand-name')?.textContent).toContain('Puzzles');
   });
 
-  it('should show the sliding puzzle when its tile is selected', () => {
+  it('should show rack em up when its tile is selected', () => {
     const fixture = TestBed.createComponent(App);
-    fixture.componentInstance.settingsService.setSelectedTile('sp');
+    fixture.componentInstance.settingsService.setSelectedTile('reu');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('app-sliding-puzzle')).toBeTruthy();
+    expect(compiled.querySelector('app-rack-em-up')).toBeTruthy();
   });
 });

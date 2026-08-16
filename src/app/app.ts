@@ -5,7 +5,6 @@ import { TileGridComponent } from './components/tile-grid/tile-grid';
 import { HeaderComponent } from './components/header/header';
 import { BackButtonComponent } from './components/back-button/back-button';
 import { SettingsService } from './services/settings';
-import { SlidingPuzzleComponent } from './components/classic-puzzles/sliding-puzzle/sliding-puzzle';
 import { RackEmUpComponent } from './components/classic-puzzles/rack-em-up/rack-em-up';
 import { TopSpinComponent } from './components/classic-puzzles/top-spin/top-spin';
 
@@ -15,7 +14,6 @@ import { TopSpinComponent } from './components/classic-puzzles/top-spin/top-spin
   imports: [
     HeaderComponent,
     BackButtonComponent,
-    SlidingPuzzleComponent,
     RackEmUpComponent,
     TopSpinComponent,
     TileGridComponent,
