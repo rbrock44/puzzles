@@ -1,6 +1,6 @@
 # Puzzles
 
-> A tile-based collection of standalone puzzle <br/>
+> A tile-based collection of standalone puzzles<br/>
 > [Live - Puzzles](https://puzzles.ryan-brock.com/)
 
 ---
@@ -36,7 +36,7 @@ To showcase and play the various puzzzles I've ran across in life and chosen to 
 
 ## 🧩 Adding a New Puzzle
 
-See [`.github/skills/add-puzzle/SKILL.md`](.github/skills/add-puzzle/SKILL.md) for the full step-by-step (component scaffold, registering it in `app.ts`/`app.html`, adding the tile to `constants/categories.ts`).
+See [`.claude/skills/add-puzzle/SKILL.md`](.claude/skills/add-puzzle/SKILL.md) (mirrored at [`.github/skills/add-puzzle/SKILL.md`](.github/skills/add-puzzle/SKILL.md)) for the full step-by-step: component scaffold, the `GAME_VIEW` play/info/scores pattern, wiring into `app.ts`/`app.html`/`constants/categories.ts`, optional persistence + high scores, and optional patterns like an auto-solver or a custom tile logo.
 
 ---
 
