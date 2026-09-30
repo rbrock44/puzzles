@@ -12,7 +12,6 @@ export class BackButtonComponent {
   constructor(private settingsService: SettingsService) {}
 
   goBack(): void {
-    this.settingsService.setSelectedTile();
-    this.settingsService.resetUrl();
+    this.settingsService.goHome();
   }
 }

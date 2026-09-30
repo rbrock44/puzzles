@@ -18,7 +18,6 @@ export class HeaderComponent {
   }
 
   goHome() {
-    this.settingsService.setSelectedTile();
-    this.settingsService.resetUrl();
+    this.settingsService.goHome();
   }
 }

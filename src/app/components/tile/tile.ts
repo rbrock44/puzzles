@@ -31,7 +31,6 @@ export class TileComponent {
   }
 
   handleClick() {
-    this.settingsService.setSelectedTile(this.tile.param);
-    this.settingsService.resetUrl();
+    this.settingsService.openTile(this.tile.param);
   }
 }
