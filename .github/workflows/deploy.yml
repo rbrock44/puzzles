@@ -26,6 +26,8 @@ jobs:
 
     - name: Run Tests
       run: npx ng test --watch=false
+      env:
+        NODE_OPTIONS: --no-webstorage
 
     - name: Build Project
       run: npm run deploy
