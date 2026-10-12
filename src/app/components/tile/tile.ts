@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Tile } from '../../objects/tile';
-import { SettingsService } from '../../services/settings';
 import { RackEmUpMiniLogoComponent } from '../classic-puzzles/rack-em-up/rack-em-up-mini-logo/rack-em-up-mini-logo';
 import { TopSpinLogoComponent } from '../classic-puzzles/top-spin/top-spin-logo/top-spin-logo';
 
@@ -10,6 +10,7 @@ import { TopSpinLogoComponent } from '../classic-puzzles/top-spin/top-spin-logo/
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
     RackEmUpMiniLogoComponent,
     TopSpinLogoComponent
   ],
@@ -24,13 +25,4 @@ export class TileComponent {
     param: '',
     storageKey: ''
   };
-
-  constructor(
-    private settingsService: SettingsService
-  ) {
-  }
-
-  handleClick() {
-    this.settingsService.openTile(this.tile.param);
-  }
 }

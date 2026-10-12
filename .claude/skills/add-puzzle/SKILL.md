@@ -8,7 +8,7 @@ description: >
 
 # Adding a New Puzzle to the Puzzles App
 
-This Angular app uses **standalone components**, `ChangeDetectionStrategy.OnPush`, and no Angular routing for puzzles — they're shown/hidden via `SettingsService.getSelectedTile()` string key. There is no "minimal example" component in the codebase to copy anymore (the old auto-generated `sliding-puzzle` was deleted for causing confusion) — use **`rack-em-up`** and **`top-spin`** (both under `src/app/components/classic-puzzles/`) as the real reference implementations. Follow every step below in order.
+This Angular app uses **standalone components**, `ChangeDetectionStrategy.OnPush`, and one route per puzzle (`/<tile-key>/`), all prerendered to static pages at build time. Routes are generated from `src/app/constants/categories.ts`, so a tile entry is the only registration a puzzle needs. Puzzle components are lazy-loaded by `PuzzlePageComponent` in the browser only, so they never run during prerendering and can use `window`, `crypto`, and `localStorage` freely. There is no "minimal example" component in the codebase to copy anymore (the old auto-generated `sliding-puzzle` was deleted for causing confusion) — use **`rack-em-up`** and **`top-spin`** (both under `src/app/components/classic-puzzles/`) as the real reference implementations. Follow every step below in order.
 
 ---
 
@@ -22,7 +22,7 @@ Gather (or ask the user for) these things before writing any code:
 | **In-app subtitle** (shown under the title, optional) | `A Puzzle to Spin You in Circles!` |
 | **Tile description** (shown on the home-grid tile) | `Tilt and shift to sort the balls into solid-colour rows` |
 | **Icon** | An emoji (e.g. `🧩`) for the simple path, **or** a custom animated logo — see [Advanced pattern: custom tile logo](#advanced-pattern-custom-tile-logo--mini-logo) |
-| **URL param / tile key** (kebab-case, plus a short 2-3 letter alias) | `rack-em-up` / `reu` |
+| **URL param / tile key** (kebab-case; becomes the page path) | `rack-em-up` → `/rack-em-up/` |
 | **Category** | `Handheld Puzzles` (existing) or a new category name |
 | **Component folder name** | `rack-em-up` |
 | **Angular selector** | `app-rack-em-up` |
@@ -300,56 +300,36 @@ Notes:
 
 ---
 
-## Step 3 — Register the component in `src/app/app.ts`
+## Step 3 — Add the tile to `src/app/constants/categories.ts`
 
-1. Add an import at the top with the other puzzle imports:
-   ```typescript
-   import { <ClassName>Component } from './components/<category>/<folder>/<name>';
-   ```
-2. Add the class to the `imports` array of the `@Component` decorator.
-
----
-
-## Step 4 — Add the route condition to `src/app/app.html`
-
-Inside the outer `@if (this.settingsService.getSelectedTile() !== null)` block, add a new `@if` matching both the full tile key and a short 2-3 letter alias (the existing convention, e.g. `"rack-em-up" || "reu"`):
-
-```html
-@if (this.settingsService.getSelectedTile() === "<tile-key>" || this.settingsService.getSelectedTile() === "<short-alias>") {
-  <app-<name>></app-<name>>
-}
-```
-
----
-
-## Step 5 — Add the tile to `src/app/constants/categories.ts`
-
-Add an entry to the appropriate category's `tiles` array (see `src/app/objects/tile.ts` for the full `Tile` interface). If the category doesn't exist yet, add a new category object.
+Add an entry to the appropriate category's `tiles` array (see `src/app/objects/tile.ts` for the full `Tile` interface). If the category doesn't exist yet, add a new category object. This one entry creates the puzzle's route (`/<tile-key>/`), its page title and meta description, its sitemap entry, and its home-grid tile.
 
 ```typescript
 {
   title: '<Display Title>',
-  description: '<Short description shown on the tile>',
+  description: '<Short description shown on the tile>', // also the page's meta description
   icon: '<emoji>',           // '' if using a custom logo component instead — see Advanced pattern
-  param: '<tile-key>',
+  param: '<tile-key>',       // the URL path
+  alias: '<short-alias>',    // optional — only for puzzles that had old `?tile=<alias>` links
   storageKey: 'puzzles-<tile-key>', // only needed if you wired up Step 2b
+  load: () => import('../components/<category>/<folder>/<name>').then(m => m.<ClassName>Component),
   // centered: true,          // optional — use with a custom logo (see Advanced pattern)
   // className: 'tile-<name>' // optional — puzzle-specific tile styling hook
 }
 ```
 
-The `param` value must exactly match the tile-key string used in `app.html`'s `@if` condition.
+`load` must be a dynamic `import()` — never import the puzzle component statically into `categories.ts`, or it lands in the main bundle and runs during prerendering.
 
 ---
 
-## Step 6 — Build and test to verify
+## Step 4 — Build and test to verify
 
 From `C:\workspace\puzzles`, run:
 ```
-npm run build
+npm run deploy
 npm run test
 ```
-The build must complete with **exit code 0** (SCSS budget warnings are acceptable, errors are not). Tests must pass — `src/app/app.spec.ts` has a "tile selected → correct component renders" test per puzzle; add one for the new puzzle following that pattern. Fix any TypeScript or template compilation errors before considering the task done.
+`npm run deploy` builds and prerenders every route, then writes `sitemap.xml` and `404.html` (`scripts/finish-static-build.mjs`). It must complete with **exit code 0** (SCSS budget warnings are acceptable, errors are not) and print `Prerendered N static routes.` with one more route than before. Tests must pass — `src/app/app.routes.spec.ts` checks each puzzle page loads its component; add a case for the new puzzle following the `top-spin` one. Fix any TypeScript or template compilation errors before considering the task done.
 
 ---
 
@@ -375,7 +355,7 @@ Instead of an emoji `icon`, both `rack-em-up` and `top-spin` render an animated 
    - `src/app/components/tile/tile.html`: add an `@else if (tile.param === '<tile-key>')` branch rendering `<app-<name>-logo class="tile-logo" [compact]="true">` before the generic emoji-badge fallback.
 4. In `categories.ts`, set `icon: ''` and add `centered: true` plus a `className: 'tile-<name>'` hook if the tile needs custom sizing/background (see `tile.scss` for existing `.tile-rack-em-up` / `.tile-top-spin` rules).
 
-This is the one place where adding a puzzle touches shared components outside its own folder beyond `app.ts`/`app.html`/`categories.ts` — keep the `@if`/`@else if` chain in `tile.html` in sync with however many puzzles use a custom logo.
+This is the one place where adding a puzzle touches shared components outside its own folder beyond `categories.ts` — keep the `@if`/`@else if` chain in `tile.html` in sync with however many puzzles use a custom logo.
 
 ---
 
@@ -388,4 +368,4 @@ This is the one place where adding a puzzle touches shared components outside it
 | Selector | `app-<kebab-case>` |
 | Class name | `PascalCaseComponent` |
 | Tile key (`param`) | `kebab-case`, e.g. `rack-em-up`, `top-spin` |
-| Short alias (checked alongside the tile key in `app.html`) | `2-3 lowercase letters`, e.g. `reu`, `ts` |
+| Short alias (`alias`, only redirects old `?tile=` links) | `2-3 lowercase letters`, e.g. `reu`, `ts` |

@@ -1,17 +1,2 @@
-<router-outlet />
 <app-header></app-header>
-
-@if (this.settingsService.getSelectedTile() !== null) {
-  <app-back-button></app-back-button>
-
-  @if (this.settingsService.getSelectedTile() === "rack-em-up" || this.settingsService.getSelectedTile() === "reu") {
-     <app-rack-em-up></app-rack-em-up>
-  }
-  @if (this.settingsService.getSelectedTile() === "top-spin" || this.settingsService.getSelectedTile() === "ts") {
-     <app-top-spin></app-top-spin>
-  }
-}
-
-@if (this.settingsService.getSelectedTile() === null) {
-  <app-tile-grid></app-tile-grid>
-}
+<router-outlet />

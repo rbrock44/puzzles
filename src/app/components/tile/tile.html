@@ -1,7 +1,6 @@
-<button type="button" class="tile" 
+<a class="tile" [routerLink]="['/', tile.param]"
     [class.tile-centered]="tile.centered"
     [ngClass]="tile.className"
-    (click)="handleClick()"
 >
     @if (tile.param === 'rack-em-up') {
     <app-rack-em-up-mini-logo class="tile-logo" [compact]="true"></app-rack-em-up-mini-logo>
@@ -18,4 +17,4 @@
     <h3 class="tile-title">{{ tile.title }}</h3>
     }
     <p class="tile-description">{{ tile.description }}</p>
-</button>
+</a>

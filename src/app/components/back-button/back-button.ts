@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { SettingsService } from '../../services/settings';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-back-button',
@@ -9,9 +9,10 @@ import { SettingsService } from '../../services/settings';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BackButtonComponent {
-  constructor(private settingsService: SettingsService) {}
+  constructor(private location: Location) {}
 
+  /** A home entry always sits underneath a puzzle page (see App), so back lands home. */
   goBack(): void {
-    this.settingsService.goHome();
+    this.location.back();
   }
 }

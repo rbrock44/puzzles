@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "gh-pages": "gh-pages -d dist/puzzles/browser",
-    "deploy": "ng build --base-href=https://puzzles.ryan-brock.com",
+    "deploy": "ng build && node scripts/finish-static-build.mjs",
     "prod": "npm run deploy && npm run gh-pages"
   },
   "private": true,
@@ -21,7 +21,9 @@
     "@angular/forms": "^22.0.0",
     "@angular/material": "^22.0.5",
     "@angular/platform-browser": "^22.0.0",
-    "@angular/router": "^22.0.0",
+    "@angular/platform-server": "^22.0.7",
+    "@angular/router": "^22.0.7",
+    "@angular/ssr": "^22.0.7",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

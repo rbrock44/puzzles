@@ -1,20 +1,16 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { provideRouter, TitleStrategy } from '@angular/router';
 import { App } from './app';
+import { routes } from './app.routes';
+import { SeoTitleStrategy } from './services/seo';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
-        provideRouter([]),
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            queryParams: of({})
-          }
-        }
+        provideRouter(routes),
+        { provide: TitleStrategy, useClass: SeoTitleStrategy }
       ]
     }).compileComponents();
   });
@@ -31,14 +27,5 @@ describe('App', () => {
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.brand-name')?.textContent).toContain('Puzzles');
-  });
-
-  it('should show rack em up when its tile is selected', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.componentInstance.settingsService.setSelectedTile('reu');
-    fixture.detectChanges();
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('app-rack-em-up')).toBeTruthy();
   });
 });

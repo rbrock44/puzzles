@@ -1,37 +1,39 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { CommonModule } from "@angular/common";
-import { RouterOutlet } from '@angular/router';
-import { TileGridComponent } from './components/tile-grid/tile-grid';
+import { ChangeDetectionStrategy, Component, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, take } from 'rxjs';
 import { HeaderComponent } from './components/header/header';
-import { BackButtonComponent } from './components/back-button/back-button';
-import { SettingsService } from './services/settings';
-import { RackEmUpComponent } from './components/classic-puzzles/rack-em-up/rack-em-up';
-import { TopSpinComponent } from './components/classic-puzzles/top-spin/top-spin';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    HeaderComponent,
-    BackButtonComponent,
-    RackEmUpComponent,
-    TopSpinComponent,
-    TileGridComponent,
-    RouterOutlet,
-    CommonModule,
-],
+  imports: [HeaderComponent, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App {
-  protected readonly title = signal('puzzles');
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
 
-  constructor(
-    public settingsService: SettingsService,
-  ) { }
+  constructor() {
+    if (isPlatformBrowser(inject(PLATFORM_ID))) {
+      this.slotHomeUnderDeepLink();
+    }
+  }
 
-  ngOnInit(): void {
-    this.settingsService.restoreFromUrl();
+  /**
+   * A home entry is slotted in underneath a deep-linked puzzle so browser/mouse back and the
+   * back button land on the home page instead of leaving the site.
+   */
+  private slotHomeUnderDeepLink(): void {
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd), take(1))
+      .subscribe(event => {
+        if (event.urlAfterRedirects !== '/') {
+          this.location.replaceState('/');
+          this.location.go(event.urlAfterRedirects);
+        }
+      });
   }
 }
