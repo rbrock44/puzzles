@@ -23,14 +23,14 @@ describe('routes', () => {
   it('should show the tile grid at the root', async () => {
     await harness.navigateByUrl('/');
     expect(harness.routeNativeElement?.querySelector('app-category')).toBeTruthy();
-    expect(TestBed.inject(Title).getTitle()).toBe('Puzzles');
+    expect(TestBed.inject(Title).getTitle()).toBe('Puzzles by Ryan Brock');
   });
 
   it('should give each puzzle its own page', async () => {
     await harness.navigateByUrl('/rack-em-up');
     expect(router.url).toBe('/rack-em-up');
     expect(harness.routeNativeElement?.querySelector('app-back-button')).toBeTruthy();
-    expect(TestBed.inject(Title).getTitle()).toBe("Rack 'em Up – Puzzles");
+    expect(TestBed.inject(Title).getTitle()).toBe("Rack 'em Up – Puzzles by Ryan Brock");
   });
 
   it('should load the puzzle into its page', async () => {
